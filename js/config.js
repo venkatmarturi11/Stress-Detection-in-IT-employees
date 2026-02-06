@@ -8,7 +8,7 @@ const CONFIG = {
     // Otherwise, use the production backend URL (User needs to update this after deployment)
     API_BASE_URL: (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
         ? 'http://localhost:8000'
-        : 'https://stress-detection-backend.onrender.com' // Placeholder: Update this after deploying backend
+        : 'https://stress-detection-in-it-employees.onrender.com'
 };
 
 console.log('Environment:', (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'Local' : 'Production');
