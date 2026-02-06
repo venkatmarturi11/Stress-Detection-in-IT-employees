@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login to Stress Detection System - Access your stress analysis dashboard">
+    <title>Login | Stress Detection in IT Professionals</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="nav-brand">
+                <span class="nav-brand-icon">🧠</span>
+                <span>StressDetect<span class="text-gradient">AI</span></span>
+            </a>
+
+            <div class="nav-actions">
+                <a href="register.html" class="btn btn-secondary">Register</a>
+                <a href="index.html" class="btn btn-primary">
+                    <i class="fas fa-home"></i>
+                    Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Page -->
+    <main class="auth-page">
+        <div class="auth-container animate-slideUp">
+            <div class="auth-card card">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </div>
+                    <h1 class="auth-title">Welcome Back</h1>
+                    <p class="auth-subtitle">Sign in to access your stress detection dashboard</p>
+                </div>
+
+                <!-- Alert Message (hidden by default) -->
+                <div class="alert d-none" id="alertMessage">
+                    <i class="fas fa-info-circle"></i>
+                    <span id="alertText"></span>
+                </div>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label required" for="email">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-icon"><i class="fas fa-envelope"></i></span>
+                            <input type="email" id="email" name="email" class="form-input has-icon"
+                                placeholder="you@example.com" required autocomplete="email">
+                        </div>
+                        <span class="form-error d-none" id="emailError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required" for="password">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-icon"><i class="fas fa-lock"></i></span>
+                            <input type="password" id="password" name="password" class="form-input has-icon"
+                                placeholder="Enter your password" required autocomplete="current-password"
+                                style="border-radius: var(--radius-lg) 0 0 var(--radius-lg);">
+                            <span class="input-group-addon" id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                        <span class="form-error d-none" id="passwordError"></span>
+                    </div>
+
+                    <div class="form-group d-flex justify-between align-center">
+                        <label class="form-checkbox">
+                            <input type="checkbox" id="rememberMe">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" style="font-size: 0.9rem; color: var(--primary-400);">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-full btn-lg" id="submitBtn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Sign In
+                    </button>
+                </form>
+
+                <div class="auth-divider">or</div>
+
+                <a href="admin-login.html" class="btn btn-secondary w-full">
+                    <i class="fas fa-user-shield"></i>
+                    Login as Admin
+                </a>
+
+                <div class="auth-footer" style="margin-top: 1.5rem;">
+                    Don't have an account? <a href="register.html">Create one</a>
+                </div>
+            </div>
+
+            <!-- Demo Credentials Card -->
+            <div class="card mt-6" style="padding: 1.5rem;">
+                <h4 style="font-size: 1rem; margin-bottom: 1rem; text-align: center;">
+                    <i class="fas fa-key" style="color: var(--accent-400);"></i>
+                    Demo Credentials
+                </h4>
+                <div style="display: grid; gap: 0.75rem; font-size: 0.9rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--glass-bg); border-radius: var(--radius-md);">
+                        <span style="color: var(--dark-text-muted);">User Email:</span>
+                        <span style="font-family: monospace;">demo@example.com</span>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--glass-bg); border-radius: var(--radius-md);">
+                        <span style="color: var(--dark-text-muted);">Password:</span>
+                        <span style="font-family: monospace;">demo123</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script>
+        // Password visibility toggle
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            togglePassword.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+    </script>
+</body>
+
+</html>

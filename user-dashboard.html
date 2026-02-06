@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="User Dashboard - Upload images and detect stress levels">
+    <title>Dashboard | Stress Detection in IT Professionals</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Face-API.js for accurate facial expression detection -->
+    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <span class="sidebar-brand-icon">🧠</span>
+                <span class="sidebar-brand-text">StressDetect<span class="text-gradient">AI</span></span>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="user-dashboard.html" class="sidebar-link active">
+                    <span class="sidebar-link-icon"><i class="fas fa-home"></i></span>
+                    Dashboard
+                </a>
+                <a href="#" class="sidebar-link" id="newScanBtn">
+                    <span class="sidebar-link-icon"><i class="fas fa-camera"></i></span>
+                    New Scan
+                </a>
+                <a href="results.html" class="sidebar-link">
+                    <span class="sidebar-link-icon"><i class="fas fa-chart-bar"></i></span>
+                    My Results
+                </a>
+                <a href="survey-prediction.html" class="sidebar-link">
+                    <span class="sidebar-link-icon"><i class="fas fa-clipboard-list"></i></span>
+                    Survey Assessment
+                </a>
+
+                <div class="sidebar-section">Account</div>
+
+                <a href="settings.html" class="sidebar-link">
+                    <span class="sidebar-link-icon"><i class="fas fa-user"></i></span>
+                    Profile
+                </a>
+                <a href="settings.html" class="sidebar-link">
+                    <span class="sidebar-link-icon"><i class="fas fa-cog"></i></span>
+                    Settings
+                </a>
+                <a href="index.html" class="sidebar-link" id="logoutBtn">
+                    <span class="sidebar-link-icon"><i class="fas fa-sign-out-alt"></i></span>
+                    Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div>
+                    <h1 class="dashboard-title">Welcome, <span class="text-gradient" id="userName">John Doe</span></h1>
+                    <p class="text-muted" style="margin-bottom: 0;">Upload an image to analyze your stress levels</p>
+                </div>
+
+                <div class="dashboard-user">
+                    <span id="currentDate"></span>
+                    <div class="user-avatar" id="userAvatar">JD</div>
+                </div>
+            </header>
+
+            <!-- Stats Cards -->
+            <div class="stats-cards">
+                <div class="card stat-card-dashboard">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalScans">0</h3>
+                        <p>Total Scans</p>
+                    </div>
+                </div>
+
+                <div class="card stat-card-dashboard">
+                    <div class="stat-icon green">
+                        <i class="fas fa-smile"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="lowStressCount">0</h3>
+                        <p>Low Stress</p>
+                    </div>
+                </div>
+
+                <div class="card stat-card-dashboard">
+                    <div class="stat-icon yellow">
+                        <i class="fas fa-meh"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="mediumStressCount">0</h3>
+                        <p>Medium Stress</p>
+                    </div>
+                </div>
+
+                <div class="card stat-card-dashboard">
+                    <div class="stat-icon red">
+                        <i class="fas fa-frown"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="highStressCount">0</h3>
+                        <p>High Stress</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;" id="dashboardContent">
+                <!-- Upload Section -->
+                <div class="card" id="uploadSection">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-camera" style="color: var(--primary-400); margin-right: 0.5rem;"></i>
+                            Capture Face Image
+                        </h3>
+                        <!-- Toggle Buttons -->
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-primary" id="uploadModeBtn">
+                                <i class="fas fa-upload"></i>
+                                Upload
+                            </button>
+                            <button class="btn btn-sm btn-secondary" id="cameraModeBtn">
+                                <i class="fas fa-video"></i>
+                                Live Camera
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Upload Zone (default visible) -->
+                    <div class="upload-zone" id="uploadZone">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h4 class="upload-title">Drag & Drop your image here</h4>
+                        <p class="upload-subtitle">or click to browse files</p>
+                        <p class="upload-formats">Supported formats: JPG, PNG, WEBP (Max 5MB)</p>
+                        <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                    </div>
+
+                    <!-- Live Camera Section (hidden by default) -->
+                    <div class="camera-section d-none" id="cameraSection">
+                        <div class="camera-container"
+                            style="position: relative; width: 100%; border-radius: var(--radius-lg); overflow: hidden; background: var(--dark-surface);">
+                            <video id="cameraVideo" autoplay playsinline
+                                style="width: 100%; display: block; transform: scaleX(-1);"></video>
+                            <canvas id="cameraCanvas" style="display: none;"></canvas>
+
+                            <!-- Camera Overlay -->
+                            <div
+                                style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 3px dashed var(--primary-400); border-radius: var(--radius-lg); pointer-events: none; opacity: 0.5;">
+                            </div>
+
+                            <!-- Face Guide -->
+                            <div
+                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 250px; border: 2px dashed var(--accent-400); border-radius: 50%; pointer-events: none; opacity: 0.6;">
+                            </div>
+
+                            <!-- Live Monitoring Indicator -->
+                            <div id="liveIndicator" class="d-none"
+                                style="position: absolute; top: 1rem; left: 1rem; display: flex; align-items: center; gap: 0.5rem; background: rgba(220, 53, 69, 0.9); padding: 0.5rem 1rem; border-radius: var(--radius-lg); font-size: 0.85rem; font-weight: 600;">
+                                <span
+                                    style="width: 10px; height: 10px; background: #fff; border-radius: 50%; animation: pulse 1s infinite;"></span>
+                                LIVE MONITORING
+                            </div>
+
+                            <!-- Live Results Overlay -->
+                            <div id="liveResultsOverlay" class="d-none"
+                                style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 1.5rem; color: white;">
+                                <div
+                                    style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center;">
+                                    <div>
+                                        <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 0.25rem;">Stress
+                                            Level</div>
+                                        <div id="liveStressLevel"
+                                            style="font-size: 1.1rem; font-weight: 700; color: var(--success);">--</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 0.25rem;">Emotion
+                                        </div>
+                                        <div id="liveEmotion" style="font-size: 1.1rem; font-weight: 700;">--</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 0.25rem;">
+                                            Confidence</div>
+                                        <div id="liveConfidence"
+                                            style="font-size: 1.1rem; font-weight: 700; color: var(--primary-400);">--%
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    style="margin-top: 0.75rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; font-size: 0.75rem;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="opacity: 0.7;">Eye Strain:</span>
+                                        <span id="liveEyeStrain">--</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="opacity: 0.7;">Brow:</span>
+                                        <span id="liveBrowTension">--</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="opacity: 0.7;">Fatigue:</span>
+                                        <span id="liveFatigue">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Camera Mode Toggle -->
+                        <div class="d-flex gap-2 mt-4 justify-center" style="margin-bottom: 1rem;">
+                            <button class="btn btn-sm btn-primary" id="captureModeBtn">
+                                <i class="fas fa-camera"></i>
+                                Capture Mode
+                            </button>
+                            <button class="btn btn-sm btn-secondary" id="liveMonitorModeBtn">
+                                <i class="fas fa-broadcast-tower"></i>
+                                Live Monitor
+                            </button>
+                        </div>
+
+                        <!-- Capture Mode Controls -->
+                        <div class="d-flex gap-4 justify-center" id="captureControls">
+                            <button class="btn btn-primary" id="captureBtn">
+                                <i class="fas fa-camera"></i>
+                                Capture Photo
+                            </button>
+                            <button class="btn btn-secondary" id="stopCameraBtn">
+                                <i class="fas fa-stop"></i>
+                                Stop Camera
+                            </button>
+                        </div>
+
+                        <!-- Live Monitor Controls (hidden by default) -->
+                        <div class="d-flex gap-4 justify-center d-none" id="liveMonitorControls">
+                            <button class="btn btn-success" id="startMonitorBtn">
+                                <i class="fas fa-play"></i>
+                                Start Monitoring
+                            </button>
+                            <button class="btn btn-danger d-none" id="stopMonitorBtn">
+                                <i class="fas fa-stop-circle"></i>
+                                Stop Monitoring
+                            </button>
+                            <button class="btn btn-secondary" id="stopCameraBtnLive">
+                                <i class="fas fa-times"></i>
+                                Close Camera
+                            </button>
+                        </div>
+
+                        <!-- Live Monitor Stats (shown during monitoring) -->
+                        <div class="d-none mt-4" id="liveMonitorStats"
+                            style="background: var(--dark-surface); border-radius: var(--radius-lg); padding: 1rem;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                                <span style="font-weight: 600; color: var(--dark-text);">
+                                    <i class="fas fa-chart-line" style="color: var(--primary-400);"></i>
+                                    Live Session Stats
+                                </span>
+                                <span id="liveSessionTime"
+                                    style="font-size: 0.85rem; color: var(--dark-text-muted);">00:00</span>
+                            </div>
+                            <div
+                                style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center;">
+                                <div
+                                    style="background: rgba(40, 167, 69, 0.15); padding: 0.75rem; border-radius: var(--radius-md);">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--success);"
+                                        id="liveScansCount">0</div>
+                                    <div style="font-size: 0.75rem; color: var(--dark-text-muted);">Scans</div>
+                                </div>
+                                <div
+                                    style="background: rgba(0, 153, 230, 0.15); padding: 0.75rem; border-radius: var(--radius-md);">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-400);"
+                                        id="liveAvgStress">--</div>
+                                    <div style="font-size: 0.75rem; color: var(--dark-text-muted);">Avg Stress</div>
+                                </div>
+                                <div
+                                    style="background: rgba(255, 193, 7, 0.15); padding: 0.75rem; border-radius: var(--radius-md);">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--warning);"
+                                        id="livePeakStress">--</div>
+                                    <div style="font-size: 0.75rem; color: var(--dark-text-muted);">Peak Stress</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="text-center mt-4" style="color: var(--dark-text-muted); font-size: 0.9rem;">
+                            <i class="fas fa-info-circle"></i>
+                            <span id="cameraHintText">Position your face within the oval guide for best results</span>
+                        </p>
+                    </div>
+
+                    <!-- Camera Permission Error -->
+                    <div class="camera-error d-none" id="cameraError" style="text-align: center; padding: 2rem;">
+                        <i class="fas fa-video-slash"
+                            style="font-size: 3rem; color: var(--danger); margin-bottom: 1rem;"></i>
+                        <h4 style="margin-bottom: 0.5rem;">Camera Access Denied</h4>
+                        <p style="color: var(--dark-text-muted); margin-bottom: 1rem;">Please allow camera access in
+                            your browser settings to use live detection.</p>
+                        <button class="btn btn-primary" id="retryCameraBtn">
+                            <i class="fas fa-redo"></i>
+                            Try Again
+                        </button>
+                    </div>
+
+                    <!-- Image Preview (hidden by default) -->
+                    <div class="image-preview d-none" id="imagePreview">
+                        <img src="" alt="Preview" id="previewImage">
+                        <div class="image-preview-overlay">
+                            <button class="btn btn-danger btn-sm" id="removeImage">
+                                <i class="fas fa-trash"></i>
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary w-full mt-6 d-none" id="analyzeBtn">
+                        <i class="fas fa-microscope"></i>
+                        Analyze Stress Level
+                    </button>
+                </div>
+
+                <!-- Results Section -->
+                <div class="card result-card d-none" id="resultSection">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-chart-pie" style="color: var(--accent-400); margin-right: 0.5rem;"></i>
+                            Detection Results
+                        </h3>
+                        <span class="badge badge-info" id="resultTime"></span>
+                    </div>
+
+                    <div class="result-header">
+                        <img src="" alt="Analyzed Image" class="result-image" id="resultImage">
+                        <div class="result-summary">
+                            <h3>Stress Level Detected</h3>
+                            <div class="stress-level" id="stressLevel">
+                                <i class="fas fa-circle"></i>
+                                <span>Loading...</span>
+                            </div>
+                            <p style="margin-top: 0.5rem; margin-bottom: 0;" id="confidenceText">Confidence: --</p>
+                        </div>
+                    </div>
+
+                    <div class="result-details">
+                        <div class="result-item">
+                            <div class="result-item-label">Primary Emotion</div>
+                            <div class="result-item-value" id="primaryEmotion">--</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-item-label">Eye Strain</div>
+                            <div class="result-item-value" id="eyeStrain">--</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-item-label">Brow Tension</div>
+                            <div class="result-item-value" id="browTension">--</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-item-label">Facial Fatigue</div>
+                            <div class="result-item-value" id="facialFatigue">--</div>
+                        </div>
+                    </div>
+
+                    <!-- Algorithm Analysis Section -->
+                    <div
+                        style="margin-top: 1rem; padding: 1rem; background: var(--dark-surface); border-radius: var(--radius-lg);">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--dark-text);">
+                                <i class="fas fa-brain" style="color: var(--primary-400); margin-right: 0.5rem;"></i>
+                                Algorithm Analysis
+                            </span>
+                            <span class="badge badge-info" id="detectionMethod" style="font-size: 0.7rem;">--</span>
+                        </div>
+                        <div
+                            style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; text-align: center;">
+                            <div
+                                style="background: rgba(156, 39, 176, 0.15); padding: 0.5rem; border-radius: var(--radius-md);">
+                                <div style="font-size: 1.1rem; font-weight: 700; color: #ab47bc;" id="resultFacesCount">
+                                    1</div>
+                                <div style="font-size: 0.65rem; color: var(--dark-text-muted);">Faces Detected</div>
+                            </div>
+                            <div
+                                style="background: rgba(0, 153, 230, 0.15); padding: 0.5rem; border-radius: var(--radius-md);">
+                                <div style="font-size: 1.1rem; font-weight: 700; color: var(--primary-400);"
+                                    id="resultReliefUrgency">--</div>
+                                <div style="font-size: 0.65rem; color: var(--dark-text-muted);">Relief Urgency</div>
+                            </div>
+                            <div
+                                style="background: rgba(0, 191, 184, 0.15); padding: 0.5rem; border-radius: var(--radius-md);">
+                                <div style="font-size: 1.1rem; font-weight: 700; color: var(--accent-400);"
+                                    id="resultImageQuality">--</div>
+                                <div style="font-size: 0.65rem; color: var(--dark-text-muted);">Image Quality</div>
+                            </div>
+                            <div
+                                style="background: rgba(40, 167, 69, 0.15); padding: 0.5rem; border-radius: var(--radius-md);">
+                                <div style="font-size: 1.1rem; font-weight: 700; color: var(--success);"
+                                    id="resultDominantProb">--</div>
+                                <div style="font-size: 0.65rem; color: var(--dark-text-muted);">Emotion Confidence</div>
+                            </div>
+                        </div>
+
+                        <!-- Emotion Probability Mini Chart -->
+                        <div style="margin-top: 0.75rem;">
+                            <div style="font-size: 0.75rem; color: var(--dark-text-muted); margin-bottom: 0.5rem;">All
+                                Emotion Probabilities:</div>
+                            <div id="miniEmotionChart" style="display: flex; gap: 0.25rem; height: 24px;">
+                                <!-- Will be populated dynamically -->
+                            </div>
+                            <div id="emotionLegend"
+                                style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.65rem;">
+                                <!-- Legend will be populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <button class="btn btn-primary" id="newScanBtnResult">
+                            <i class="fas fa-redo"></i>
+                            New Scan
+                        </button>
+                        <button class="btn btn-secondary" onclick="window.location.href='results.html'">
+                            <i class="fas fa-history"></i>
+                            View Full Analysis
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Personalized Stress Relief Advice (shown after detection) -->
+                <div class="card d-none" id="adviceSection" style="grid-column: 1 / -1;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-heart" style="color: var(--danger); margin-right: 0.5rem;"></i>
+                            <span id="adviceTitle">Personalized Stress Relief Recommendations</span>
+                        </h3>
+                        <span class="badge" id="adviceBadge">Based on your scan</span>
+                    </div>
+
+                    <div class="alert mb-6" id="adviceAlert">
+                        <i class="fas fa-info-circle"></i>
+                        <span id="adviceIntro">Loading recommendations...</span>
+                    </div>
+
+                    <div id="adviceContent"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                        <!-- Advice items will be populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Tips Section (shown when no result) -->
+                <div class="card" id="tipsSection">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-lightbulb" style="color: var(--warning); margin-right: 0.5rem;"></i>
+                            Tips for Best Results
+                        </h3>
+                    </div>
+
+                    <div class="card-body">
+                        <ul style="display: flex; flex-direction: column; gap: 1rem;">
+                            <li style="display: flex; align-items: flex-start; gap: 1rem;">
+                                <span
+                                    style="background: var(--glass-bg); padding: 0.5rem; border-radius: var(--radius-md);">
+                                    <i class="fas fa-sun" style="color: var(--warning);"></i>
+                                </span>
+                                <div>
+                                    <strong>Good Lighting</strong>
+                                    <p style="margin: 0; font-size: 0.9rem; color: var(--dark-text-muted);">Ensure your
+                                        face is well-lit, preferably with natural light</p>
+                                </div>
+                            </li>
+                            <li style="display: flex; align-items: flex-start; gap: 1rem;">
+                                <span
+                                    style="background: var(--glass-bg); padding: 0.5rem; border-radius: var(--radius-md);">
+                                    <i class="fas fa-arrows-alt" style="color: var(--primary-400);"></i>
+                                </span>
+                                <div>
+                                    <strong>Face the Camera</strong>
+                                    <p style="margin: 0; font-size: 0.9rem; color: var(--dark-text-muted);">Look
+                                        directly at the camera with your face clearly visible</p>
+                                </div>
+                            </li>
+                            <li style="display: flex; align-items: flex-start; gap: 1rem;">
+                                <span
+                                    style="background: var(--glass-bg); padding: 0.5rem; border-radius: var(--radius-md);">
+                                    <i class="fas fa-image" style="color: var(--success);"></i>
+                                </span>
+                                <div>
+                                    <strong>Clear Image</strong>
+                                    <p style="margin: 0; font-size: 0.9rem; color: var(--dark-text-muted);">Use a
+                                        high-quality, non-blurry image for accurate analysis</p>
+                                </div>
+                            </li>
+                            <li style="display: flex; align-items: flex-start; gap: 1rem;">
+                                <span
+                                    style="background: var(--glass-bg); padding: 0.5rem; border-radius: var(--radius-md);">
+                                    <i class="fas fa-user" style="color: var(--accent-400);"></i>
+                                </span>
+                                <div>
+                                    <strong>Natural Expression</strong>
+                                    <p style="margin: 0; font-size: 0.9rem; color: var(--dark-text-muted);">Keep a
+                                        neutral, natural expression for best detection</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Scans -->
+            <div class="card mt-8">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-history" style="color: var(--primary-400); margin-right: 0.5rem;"></i>
+                        Recent Scans
+                    </h3>
+                    <a href="results.html" class="btn btn-sm btn-secondary">View All</a>
+                </div>
+
+                <div class="table-container" style="border: none; background: none;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Emotion</th>
+                                <th>Stress Level</th>
+                                <th>Confidence</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentScansTable">
+                            <tr>
+                                <td colspan="4"
+                                    style="text-align: center; padding: 2rem; color: var(--dark-text-muted);">
+                                    <i class="fas fa-inbox"
+                                        style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                                    No scans yet. Upload an image to get started!
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay d-none" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Analyzing facial features...</p>
+        <div class="progress" style="width: 200px; margin-top: 1rem;">
+            <div class="progress-bar" id="analysisProgress" style="width: 0%;"></div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="js/app.js"></script>
+    <script src="js/detection.js"></script>
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current date
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', dateOptions);
+
+            // Check if user is logged in
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            if (currentUser.name) {
+                document.getElementById('userName').textContent = currentUser.name;
+                document.getElementById('userAvatar').textContent = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            }
+
+            // Load user stats
+            loadUserStats();
+
+            // Load recent scans
+            loadRecentScans();
+        });
+
+        // File upload handling
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImage = document.getElementById('previewImage');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const removeImage = document.getElementById('removeImage');
+
+        uploadZone.addEventListener('click', () => fileInput.click());
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) handleFile(files[0]);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) handleFile(e.target.files[0]);
+        });
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showToast('Please select an image file', 'error');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('File size must be less than 5MB', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                uploadZone.classList.add('d-none');
+                imagePreview.classList.remove('d-none');
+                analyzeBtn.classList.remove('d-none');
+
+                // Store for later use
+                window.uploadedImage = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        removeImage.addEventListener('click', resetUpload);
+
+        function resetUpload() {
+            uploadZone.classList.remove('d-none');
+            imagePreview.classList.add('d-none');
+            analyzeBtn.classList.add('d-none');
+            fileInput.value = '';
+            window.uploadedImage = null;
+
+            // Also hide camera section if in camera mode
+            document.getElementById('cameraSection').classList.add('d-none');
+            document.getElementById('cameraError').classList.add('d-none');
+        }
+
+        // ========== CAMERA FUNCTIONALITY ==========
+        let cameraStream = null;
+        const cameraVideo = document.getElementById('cameraVideo');
+        const cameraCanvas = document.getElementById('cameraCanvas');
+        const cameraSection = document.getElementById('cameraSection');
+        const cameraError = document.getElementById('cameraError');
+        const uploadModeBtn = document.getElementById('uploadModeBtn');
+        const cameraModeBtn = document.getElementById('cameraModeBtn');
+        const captureBtn = document.getElementById('captureBtn');
+        const stopCameraBtn = document.getElementById('stopCameraBtn');
+        const retryCameraBtn = document.getElementById('retryCameraBtn');
+
+        // Switch to Upload Mode
+        uploadModeBtn.addEventListener('click', () => {
+            uploadModeBtn.classList.remove('btn-secondary');
+            uploadModeBtn.classList.add('btn-primary');
+            cameraModeBtn.classList.remove('btn-primary');
+            cameraModeBtn.classList.add('btn-secondary');
+
+            // Stop camera if running
+            stopCamera();
+
+            // Show upload zone, hide camera
+            uploadZone.classList.remove('d-none');
+            cameraSection.classList.add('d-none');
+            cameraError.classList.add('d-none');
+            imagePreview.classList.add('d-none');
+            analyzeBtn.classList.add('d-none');
+        });
+
+        // Switch to Camera Mode
+        cameraModeBtn.addEventListener('click', () => {
+            cameraModeBtn.classList.remove('btn-secondary');
+            cameraModeBtn.classList.add('btn-primary');
+            uploadModeBtn.classList.remove('btn-primary');
+            uploadModeBtn.classList.add('btn-secondary');
+
+            // Hide upload zone, show camera
+            uploadZone.classList.add('d-none');
+            imagePreview.classList.add('d-none');
+            analyzeBtn.classList.add('d-none');
+            cameraError.classList.add('d-none');
+
+            // Start camera
+            startCamera();
+        });
+
+        // Start Camera
+        async function startCamera() {
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: { ideal: 640 },
+                        height: { ideal: 480 },
+                        facingMode: 'user'
+                    }
+                });
+                cameraVideo.srcObject = cameraStream;
+                cameraSection.classList.remove('d-none');
+                cameraError.classList.add('d-none');
+                showToast('Camera started! Position your face in the frame.', 'success');
+            } catch (error) {
+                console.error('Camera access denied:', error);
+                cameraSection.classList.add('d-none');
+                cameraError.classList.remove('d-none');
+                showToast('Camera access denied. Please check permissions.', 'error');
+            }
+        }
+
+        // Stop Camera
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+                cameraVideo.srcObject = null;
+            }
+            cameraSection.classList.add('d-none');
+        }
+
+        stopCameraBtn.addEventListener('click', () => {
+            stopCamera();
+            uploadZone.classList.remove('d-none');
+
+            // Reset button states
+            uploadModeBtn.classList.remove('btn-secondary');
+            uploadModeBtn.classList.add('btn-primary');
+            cameraModeBtn.classList.remove('btn-primary');
+            cameraModeBtn.classList.add('btn-secondary');
+
+            showToast('Camera stopped', 'info');
+        });
+
+        // Retry Camera
+        retryCameraBtn.addEventListener('click', () => {
+            cameraError.classList.add('d-none');
+            startCamera();
+        });
+
+        // Capture Photo from Camera
+        captureBtn.addEventListener('click', () => {
+            if (!cameraStream) {
+                showToast('Camera is not active', 'error');
+                return;
+            }
+
+            // Set canvas dimensions
+            cameraCanvas.width = cameraVideo.videoWidth;
+            cameraCanvas.height = cameraVideo.videoHeight;
+
+            // Draw video frame to canvas (mirror to match video display)
+            const ctx = cameraCanvas.getContext('2d');
+            ctx.translate(cameraCanvas.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(cameraVideo, 0, 0);
+
+            // Get image data URL
+            const imageDataUrl = cameraCanvas.toDataURL('image/jpeg', 0.9);
+            window.uploadedImage = imageDataUrl;
+
+            // Stop camera and show preview
+            stopCamera();
+
+            // Show captured image in preview
+            previewImage.src = imageDataUrl;
+            imagePreview.classList.remove('d-none');
+            analyzeBtn.classList.remove('d-none');
+
+            showToast('Photo captured! Click "Analyze Stress Level" to continue.', 'success');
+        });
+
+        // ========== LIVE MONITORING MODE ==========
+        let liveMonitorInterval = null;
+        let liveSessionTimer = null;
+        let liveSessionSeconds = 0;
+        let liveSessionResults = [];
+
+        const captureModeBtn = document.getElementById('captureModeBtn');
+        const liveMonitorModeBtn = document.getElementById('liveMonitorModeBtn');
+        const captureControls = document.getElementById('captureControls');
+        const liveMonitorControls = document.getElementById('liveMonitorControls');
+        const startMonitorBtn = document.getElementById('startMonitorBtn');
+        const stopMonitorBtn = document.getElementById('stopMonitorBtn');
+        const stopCameraBtnLive = document.getElementById('stopCameraBtnLive');
+        const liveIndicator = document.getElementById('liveIndicator');
+        const liveResultsOverlay = document.getElementById('liveResultsOverlay');
+        const liveMonitorStats = document.getElementById('liveMonitorStats');
+        const cameraHintText = document.getElementById('cameraHintText');
+
+        // Switch to Capture Mode
+        captureModeBtn.addEventListener('click', () => {
+            captureModeBtn.classList.remove('btn-secondary');
+            captureModeBtn.classList.add('btn-primary');
+            liveMonitorModeBtn.classList.remove('btn-primary');
+            liveMonitorModeBtn.classList.add('btn-secondary');
+
+            // Stop live monitoring if running
+            stopLiveMonitoring();
+
+            // Show capture controls, hide live controls
+            captureControls.classList.remove('d-none');
+            liveMonitorControls.classList.add('d-none');
+            liveMonitorStats.classList.add('d-none');
+            liveResultsOverlay.classList.add('d-none');
+            liveIndicator.classList.add('d-none');
+
+            cameraHintText.textContent = 'Position your face within the oval guide for best results';
+        });
+
+        // Switch to Live Monitor Mode
+        liveMonitorModeBtn.addEventListener('click', () => {
+            liveMonitorModeBtn.classList.remove('btn-secondary');
+            liveMonitorModeBtn.classList.add('btn-primary');
+            captureModeBtn.classList.remove('btn-primary');
+            captureModeBtn.classList.add('btn-secondary');
+
+            // Show live controls, hide capture controls
+            captureControls.classList.add('d-none');
+            liveMonitorControls.classList.remove('d-none');
+
+            cameraHintText.textContent = 'Click "Start Monitoring" for continuous real-time stress detection';
+        });
+
+        // Start Live Monitoring
+        startMonitorBtn.addEventListener('click', () => {
+            if (!cameraStream) {
+                showToast('Camera is not active', 'error');
+                return;
+            }
+
+            // Reset session data
+            liveSessionSeconds = 0;
+            liveSessionResults = [];
+
+            // Update UI
+            startMonitorBtn.classList.add('d-none');
+            stopMonitorBtn.classList.remove('d-none');
+            liveIndicator.classList.remove('d-none');
+            liveResultsOverlay.classList.remove('d-none');
+            liveMonitorStats.classList.remove('d-none');
+
+            // Reset stats display
+            document.getElementById('liveScansCount').textContent = '0';
+            document.getElementById('liveAvgStress').textContent = '--';
+            document.getElementById('livePeakStress').textContent = '--';
+            document.getElementById('liveSessionTime').textContent = '00:00';
+
+            cameraHintText.textContent = 'Analyzing continuously... Results update every 2 seconds';
+
+            // Start session timer
+            liveSessionTimer = setInterval(() => {
+                liveSessionSeconds++;
+                const mins = Math.floor(liveSessionSeconds / 60).toString().padStart(2, '0');
+                const secs = (liveSessionSeconds % 60).toString().padStart(2, '0');
+                document.getElementById('liveSessionTime').textContent = `${mins}:${secs}`;
+            }, 1000);
+
+            // Start continuous detection
+            performLiveDetection();
+            liveMonitorInterval = setInterval(performLiveDetection, 2000);
+
+            showToast('Live monitoring started! Results update every 2 seconds.', 'success');
+        });
+
+        // Perform Live Detection (captures frame and analyzes)
+        async function performLiveDetection() {
+            if (!cameraStream) {
+                stopLiveMonitoring();
+                return;
+            }
+
+            // Capture current frame
+            cameraCanvas.width = cameraVideo.videoWidth;
+            cameraCanvas.height = cameraVideo.videoHeight;
+            const ctx = cameraCanvas.getContext('2d');
+            ctx.save();
+            ctx.translate(cameraCanvas.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(cameraVideo, 0, 0);
+            ctx.restore();
+
+            // Get image and store for result display
+            window.uploadedImage = cameraCanvas.toDataURL('image/jpeg', 0.8);
+
+            // Generate result (async)
+            try {
+                const result = await detectStress();
+                liveSessionResults.push(result);
+
+                // Update live overlay
+                updateLiveResultsOverlay(result);
+
+                // Update session stats
+                updateLiveSessionStats();
+            } catch (error) {
+                console.error('Live detection error:', error);
+            }
+        }
+
+        // Update Live Results Overlay
+        function updateLiveResultsOverlay(result) {
+            const stressColors = {
+                'Low': 'var(--success)',
+                'Medium': 'var(--warning)',
+                'High': 'var(--danger)'
+            };
+
+            const emotionEmojis = {
+                'Neutral': '😐',
+                'Happy': '😊',
+                'Sad': '😢',
+                'Angry': '😠',
+                'Fear': '😨',
+                'Disgust': '🤢',
+                'Surprise': '😲'
+            };
+
+            document.getElementById('liveStressLevel').textContent = result.stressLevel;
+            document.getElementById('liveStressLevel').style.color = stressColors[result.stressLevel];
+            document.getElementById('liveEmotion').textContent = `${emotionEmojis[result.emotion] || '😐'} ${result.emotion}`;
+            document.getElementById('liveConfidence').textContent = `${result.confidence}%`;
+            document.getElementById('liveEyeStrain').textContent = result.eyeStrain;
+            document.getElementById('liveBrowTension').textContent = result.browTension;
+            document.getElementById('liveFatigue').textContent = result.facialFatigue;
+        }
+
+        // Update Live Session Stats
+        function updateLiveSessionStats() {
+            const count = liveSessionResults.length;
+            document.getElementById('liveScansCount').textContent = count;
+
+            if (count > 0) {
+                // Calculate average stress
+                const stressValues = { 'Low': 1, 'Medium': 2, 'High': 3 };
+                const avgStressValue = liveSessionResults.reduce((acc, r) => acc + stressValues[r.stressLevel], 0) / count;
+                let avgStress = 'Low';
+                if (avgStressValue >= 2.5) avgStress = 'High';
+                else if (avgStressValue >= 1.5) avgStress = 'Medium';
+                document.getElementById('liveAvgStress').textContent = avgStress;
+
+                // Find peak stress
+                const hasHigh = liveSessionResults.some(r => r.stressLevel === 'High');
+                const hasMedium = liveSessionResults.some(r => r.stressLevel === 'Medium');
+                document.getElementById('livePeakStress').textContent = hasHigh ? 'High' : (hasMedium ? 'Medium' : 'Low');
+            }
+        }
+
+        // Stop Live Monitoring
+        function stopLiveMonitoring() {
+            if (liveMonitorInterval) {
+                clearInterval(liveMonitorInterval);
+                liveMonitorInterval = null;
+            }
+            if (liveSessionTimer) {
+                clearInterval(liveSessionTimer);
+                liveSessionTimer = null;
+            }
+
+            // Update UI
+            startMonitorBtn.classList.remove('d-none');
+            stopMonitorBtn.classList.add('d-none');
+            liveIndicator.classList.add('d-none');
+            liveResultsOverlay.classList.add('d-none');
+
+            cameraHintText.textContent = 'Click "Start Monitoring" for continuous real-time stress detection';
+        }
+
+        stopMonitorBtn.addEventListener('click', () => {
+            stopLiveMonitoring();
+
+            // Save session results if any
+            if (liveSessionResults.length > 0) {
+                // Save a summary result for the session
+                const lastResult = liveSessionResults[liveSessionResults.length - 1];
+                saveResult(lastResult);
+
+                showToast(`Session ended! ${liveSessionResults.length} scans recorded. Last result saved.`, 'success');
+
+                // Show the detailed result
+                showResult(lastResult);
+            } else {
+                showToast('Live monitoring stopped', 'info');
+            }
+        });
+
+        // Stop camera from live mode
+        stopCameraBtnLive.addEventListener('click', () => {
+            stopLiveMonitoring();
+            stopCamera();
+            uploadZone.classList.remove('d-none');
+            liveMonitorStats.classList.add('d-none');
+
+            // Reset main mode buttons
+            uploadModeBtn.classList.remove('btn-secondary');
+            uploadModeBtn.classList.add('btn-primary');
+            cameraModeBtn.classList.remove('btn-primary');
+            cameraModeBtn.classList.add('btn-secondary');
+
+            // Reset camera mode buttons
+            captureModeBtn.classList.remove('btn-secondary');
+            captureModeBtn.classList.add('btn-primary');
+            liveMonitorModeBtn.classList.remove('btn-primary');
+            liveMonitorModeBtn.classList.add('btn-secondary');
+            captureControls.classList.remove('d-none');
+            liveMonitorControls.classList.add('d-none');
+
+            showToast('Camera closed', 'info');
+        });
+
+
+        // Analyze button click
+        analyzeBtn.addEventListener('click', async () => {
+            if (!window.uploadedImage) return;
+
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const progressBar = document.getElementById('analysisProgress');
+
+            loadingOverlay.classList.remove('d-none');
+
+            // Simulate progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 95) progress = 95;
+                progressBar.style.width = progress + '%';
+            }, 200);
+
+            try {
+                // Call detectStress with await (it's an async function!)
+                const result = await detectStress();
+
+                clearInterval(progressInterval);
+                progressBar.style.width = '100%';
+
+                setTimeout(() => {
+                    loadingOverlay.classList.add('d-none');
+                    progressBar.style.width = '0%';
+
+                    if (result && result.stressLevel) {
+                        // Save result
+                        saveResult(result);
+
+                        // Show result
+                        showResult(result);
+
+                        showToast('Stress analysis completed!', 'success');
+                    } else {
+                        showToast('Could not detect stress. Please try a clearer image.', 'error');
+                    }
+                }, 500);
+            } catch (error) {
+                clearInterval(progressInterval);
+                loadingOverlay.classList.add('d-none');
+                progressBar.style.width = '0%';
+                console.error('Detection error:', error);
+                showToast('Detection failed. Please try again.', 'error');
+            }
+        });
+
+        function showResult(result) {
+            const resultSection = document.getElementById('resultSection');
+            const tipsSection = document.getElementById('tipsSection');
+            const adviceSection = document.getElementById('adviceSection');
+
+            // Update result section
+            document.getElementById('resultImage').src = window.uploadedImage;
+            document.getElementById('resultTime').textContent = new Date().toLocaleTimeString();
+
+            const stressLevel = document.getElementById('stressLevel');
+            stressLevel.className = 'stress-level ' + result.stressLevel.toLowerCase();
+            stressLevel.innerHTML = `
+        <i class="fas fa-${result.stressLevel === 'Low' ? 'smile' : result.stressLevel === 'Medium' ? 'meh' : 'frown'}"></i>
+        <span>${result.stressLevel} Stress</span>
+      `;
+
+            document.getElementById('confidenceText').textContent = `Confidence: ${result.confidence}%`;
+            document.getElementById('primaryEmotion').textContent = result.emotion;
+            document.getElementById('eyeStrain').textContent = result.eyeStrain;
+            document.getElementById('browTension').textContent = result.browTension;
+            document.getElementById('facialFatigue').textContent = result.facialFatigue;
+
+            // Update algorithm analysis section
+            updateAlgorithmAnalysis(result);
+
+            // Show result section
+            resultSection.classList.remove('d-none');
+            tipsSection.classList.add('d-none');
+
+            // Show personalized stress relief advice
+            showStressRelief(result);
+
+            // Update stats
+            loadUserStats();
+            loadRecentScans();
+        }
+
+        // Update algorithm analysis display
+        function updateAlgorithmAnalysis(result) {
+            // Detection method
+            const methodEl = document.getElementById('detectionMethod');
+            if (methodEl) methodEl.textContent = result.detectionMethod || 'Image Analysis';
+
+            // Faces count (multi-face detection)
+            const facesCountEl = document.getElementById('resultFacesCount');
+            if (facesCountEl) {
+                const count = result.facesCount || 1;
+                facesCountEl.textContent = count;
+                if (count > 1) {
+                    facesCountEl.style.color = '#ab47bc';
+                    facesCountEl.title = `${count} faces detected in image`;
+                }
+            }
+
+            // Relief urgency
+            const urgency = result.reliefUrgency || calculateLocalReliefUrgency(result);
+            const urgencyEl = document.getElementById('resultReliefUrgency');
+            if (urgencyEl) {
+                urgencyEl.textContent = `${urgency}/10`;
+                if (urgency >= 7) urgencyEl.style.color = 'var(--danger)';
+                else if (urgency >= 4) urgencyEl.style.color = 'var(--warning)';
+                else urgencyEl.style.color = 'var(--success)';
+            }
+
+            // Image quality
+            const quality = result.imageFeatures?.quality ||
+                result.algorithmResults?.imageAnalysis?.metrics?.imageQuality ||
+                Math.round(result.confidence * 0.9);
+            const qualityEl = document.getElementById('resultImageQuality');
+            if (qualityEl) qualityEl.textContent = `${quality}%`;
+
+            // Dominant emotion probability
+            const probs = result.allProbabilities || {};
+            const dominantProb = probs[result.emotion] || result.confidence;
+            const probEl = document.getElementById('resultDominantProb');
+            if (probEl) probEl.textContent = `${dominantProb}%`;
+
+            // Update emotion probability mini chart
+            updateEmotionChart(result);
+        }
+
+        // Calculate local relief urgency
+        function calculateLocalReliefUrgency(result) {
+            let urgency = 3;
+            const stressScores = { 'Low': 2, 'Medium': 5, 'High': 8 };
+            urgency = stressScores[result.stressLevel] || 5;
+
+            const highStressEmotions = ['Angry', 'Fearful', 'Sad', 'Disgusted'];
+            if (highStressEmotions.includes(result.emotion)) urgency += 1;
+
+            const featureScores = { 'Normal': 0, 'Mild': 0.3, 'Moderate': 0.6, 'High': 0.9, 'Severe': 1.2 };
+            urgency += featureScores[result.eyeStrain] || 0;
+            urgency += featureScores[result.browTension] || 0;
+            urgency += featureScores[result.facialFatigue] || 0;
+
+            return Math.max(1, Math.min(10, Math.round(urgency)));
+        }
+
+        // Update emotion probability chart
+        function updateEmotionChart(result) {
+            const chartEl = document.getElementById('miniEmotionChart');
+            const legendEl = document.getElementById('emotionLegend');
+            if (!chartEl || !legendEl) return;
+
+            const emotions = [
+                { name: 'Neutral', color: '#6c757d', icon: '😐' },
+                { name: 'Happy', color: '#28a745', icon: '😊' },
+                { name: 'Sad', color: '#17a2b8', icon: '😢' },
+                { name: 'Angry', color: '#dc3545', icon: '😠' },
+                { name: 'Fearful', color: '#ffc107', icon: '😨' },
+                { name: 'Disgusted', color: '#9c27b0', icon: '🤢' },
+                { name: 'Surprised', color: '#00bfb8', icon: '😲' }
+            ];
+
+            // Generate probabilities if not available
+            let probs = result.allProbabilities;
+            if (!probs || Object.keys(probs).length === 0) {
+                probs = {};
+                emotions.forEach(e => probs[e.name] = e.name === result.emotion ? 40 : 10);
+            }
+
+            // Build chart bars
+            let chartHtml = '';
+            let legendHtml = '';
+            emotions.forEach(e => {
+                const prob = probs[e.name] || 0;
+                chartHtml += `<div style="flex: ${prob}; background: ${e.color}; border-radius: 3px; min-width: ${prob > 5 ? '2px' : '0'};" title="${e.name}: ${prob}%"></div>`;
+                legendHtml += `<span style="display: flex; align-items: center; gap: 0.2rem;"><span style="display: inline-block; width: 8px; height: 8px; background: ${e.color}; border-radius: 2px;"></span>${e.icon} ${prob}%</span>`;
+            });
+
+            chartEl.innerHTML = chartHtml;
+            legendEl.innerHTML = legendHtml;
+        }
+
+        // Stress Relief Recommendations based on stress level and emotion
+        function showStressRelief(result) {
+            const adviceSection = document.getElementById('adviceSection');
+            const adviceContent = document.getElementById('adviceContent');
+            const adviceIntro = document.getElementById('adviceIntro');
+            const adviceAlert = document.getElementById('adviceAlert');
+            const adviceBadge = document.getElementById('adviceBadge');
+
+            // Define advice based on stress levels
+            const stressAdvice = {
+                'Low': {
+                    intro: "Great news! Your stress level is low. Here are some tips to maintain your well-being:",
+                    alertClass: 'alert-success',
+                    badgeClass: 'badge-success',
+                    tips: [
+                        { icon: 'spa', color: 'var(--success)', title: 'Keep Up the Good Work', desc: 'Continue your current stress management practices. Consider mindfulness meditation to maintain balance.' },
+                        { icon: 'running', color: 'var(--primary-400)', title: 'Stay Active', desc: 'Regular physical activity helps maintain low stress. Aim for 30 minutes of exercise daily.' },
+                        { icon: 'book', color: 'var(--accent-400)', title: 'Continue Learning', desc: 'Engage in hobbies and learning to keep your mind stimulated positively.' },
+                        { icon: 'users', color: 'var(--warning)', title: 'Social Connections', desc: 'Maintain strong social bonds with friends and family for emotional support.' }
+                    ]
+                },
+                'Medium': {
+                    intro: "Your stress level is moderate. Here are personalized recommendations to help reduce stress:",
+                    alertClass: 'alert-warning',
+                    badgeClass: 'badge-warning',
+                    tips: [
+                        { icon: 'clock', color: 'var(--warning)', title: 'Regular Breaks', desc: 'Take a 5-10 minute break every 45 minutes. Step away from your workstation and stretch.' },
+                        { icon: 'lungs', color: 'var(--primary-400)', title: 'Deep Breathing', desc: 'Practice 4-7-8 breathing: Inhale for 4 seconds, hold for 7, exhale for 8. Repeat 3-4 times.' },
+                        { icon: 'moon', color: 'var(--accent-400)', title: 'Improve Sleep Quality', desc: 'Aim for 7-8 hours of sleep. Avoid screens 1 hour before bedtime and maintain a regular sleep schedule.' },
+                        { icon: 'tasks', color: 'var(--success)', title: 'Prioritize Tasks', desc: 'Break large projects into smaller tasks. Focus on one task at a time to reduce overwhelm.' },
+                        { icon: 'coffee', color: 'var(--danger)', title: 'Limit Caffeine', desc: 'Reduce caffeine intake, especially after 2 PM. Try herbal tea or water instead.' }
+                    ]
+                },
+                'High': {
+                    intro: "⚠️ Your stress level is high. Please take immediate action with these stress relief strategies:",
+                    alertClass: 'alert-danger',
+                    badgeClass: 'badge-danger',
+                    tips: [
+                        { icon: 'pause-circle', color: 'var(--danger)', title: 'Immediate Break Required', desc: 'Stop working now and take at least 15-20 minutes to decompress. High stress requires immediate attention.' },
+                        { icon: 'brain', color: 'var(--primary-400)', title: 'Progressive Muscle Relaxation', desc: 'Tense each muscle group for 5 seconds, then release for 30 seconds. Start from toes and work up to head.' },
+                        { icon: 'walking', color: 'var(--success)', title: 'Walk Outside', desc: 'A 15-minute walk in nature can significantly reduce cortisol levels. Get fresh air and sunlight.' },
+                        { icon: 'comment-dots', color: 'var(--accent-400)', title: 'Talk to Someone', desc: 'Speak with a trusted colleague, friend, or mental health professional about your stress.' },
+                        { icon: 'calendar-check', color: 'var(--warning)', title: 'Schedule Recovery', desc: 'Block time in your calendar for recovery activities. This is not optional - it is essential.' },
+                        { icon: 'user-md', color: 'var(--info)', title: 'Consider Professional Help', desc: 'If high stress persists, consult with an HR department or mental health professional for support.' }
+                    ]
+                }
+            };
+
+            // Emotion-specific additional advice
+            const emotionAdvice = {
+                'Angry': { icon: 'fire-alt', color: 'var(--danger)', title: 'Anger Management', desc: 'Practice counting to 10 before reacting. Physical exercise like punching a pillow or jogging can help release anger safely.' },
+                'Sad': { icon: 'heart', color: 'var(--primary-400)', title: 'Combat Sadness', desc: 'Reach out to loved ones, engage in activities you enjoy, and consider listening to uplifting music or watching positive content.' },
+                'Fear': { icon: 'shield-alt', color: 'var(--accent-400)', title: 'Manage Anxiety', desc: 'Identify specific fears and challenge them with rational thinking. Grounding techniques: name 5 things you can see, 4 you can touch, 3 you can hear.' },
+                'Disgust': { icon: 'leaf', color: 'var(--success)', title: 'Re-center Yourself', desc: 'Practice acceptance and focus on positive aspects of your environment. A clean, organized workspace can help.' }
+            };
+
+            const advice = stressAdvice[result.stressLevel];
+
+            // Update UI
+            adviceIntro.textContent = advice.intro;
+            adviceAlert.className = `alert ${advice.alertClass} mb-6`;
+            adviceBadge.className = `badge ${advice.badgeClass}`;
+            adviceBadge.textContent = `${result.stressLevel} Stress Detected`;
+
+            // Generate advice cards
+            let tipsHtml = advice.tips.map(tip => `
+                <div class="d-flex gap-4" style="align-items: flex-start;">
+                    <div style="background: ${tip.color}20; padding: 0.75rem; border-radius: var(--radius-lg); min-width: 48px; text-align: center;">
+                        <i class="fas fa-${tip.icon}" style="color: ${tip.color}; font-size: 1.25rem;"></i>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1rem; margin-bottom: 0.25rem; color: var(--dark-text);">${tip.title}</h4>
+                        <p style="margin: 0; font-size: 0.875rem; color: var(--dark-text-muted);">${tip.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add emotion-specific advice if applicable
+            if (emotionAdvice[result.emotion]) {
+                const ea = emotionAdvice[result.emotion];
+                tipsHtml += `
+                    <div class="d-flex gap-4" style="align-items: flex-start; border-left: 3px solid ${ea.color}; padding-left: 1rem;">
+                        <div style="background: ${ea.color}20; padding: 0.75rem; border-radius: var(--radius-lg); min-width: 48px; text-align: center;">
+                            <i class="fas fa-${ea.icon}" style="color: ${ea.color}; font-size: 1.25rem;"></i>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 1rem; margin-bottom: 0.25rem; color: var(--dark-text);">
+                                ${ea.title} <span class="badge badge-info" style="font-size: 0.7rem;">For ${result.emotion}</span>
+                            </h4>
+                            <p style="margin: 0; font-size: 0.875rem; color: var(--dark-text-muted);">${ea.desc}</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            adviceContent.innerHTML = tipsHtml;
+            adviceSection.classList.remove('d-none');
+        }
+
+        // New scan buttons
+        document.getElementById('newScanBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            resetForNewScan();
+        });
+
+        document.getElementById('newScanBtnResult').addEventListener('click', resetForNewScan);
+
+        function resetForNewScan() {
+            resetUpload();
+            document.getElementById('resultSection').classList.add('d-none');
+            document.getElementById('adviceSection').classList.add('d-none');
+            document.getElementById('tipsSection').classList.remove('d-none');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Load user stats
+        function loadUserStats() {
+            const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+
+            document.getElementById('totalScans').textContent = results.length;
+            document.getElementById('lowStressCount').textContent = results.filter(r => r.stressLevel === 'Low').length;
+            document.getElementById('mediumStressCount').textContent = results.filter(r => r.stressLevel === 'Medium').length;
+            document.getElementById('highStressCount').textContent = results.filter(r => r.stressLevel === 'High').length;
+        }
+
+        // Load recent scans
+        function loadRecentScans() {
+            const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+            const tableBody = document.getElementById('recentScansTable');
+
+            if (results.length === 0) {
+                tableBody.innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 2rem; color: var(--dark-text-muted);">
+              <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+              No scans yet. Upload an image to get started!
+            </td>
+          </tr>
+        `;
+                return;
+            }
+
+            const recentResults = results.slice(-5).reverse();
+            tableBody.innerHTML = recentResults.map(result => `
+        <tr>
+          <td>${new Date(result.timestamp).toLocaleString()}</td>
+          <td>
+            <span style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 1.2rem;">${getEmotionEmoji(result.emotion)}</span>
+              ${result.emotion}
+            </span>
+          </td>
+          <td>
+            <span class="badge badge-${result.stressLevel === 'Low' ? 'success' : result.stressLevel === 'Medium' ? 'warning' : 'danger'}">
+              ${result.stressLevel}
+            </span>
+          </td>
+          <td>${result.confidence}%</td>
+        </tr>
+      `).join('');
+        }
+
+        function getEmotionEmoji(emotion) {
+            const emojis = {
+                'Neutral': '😐',
+                'Happy': '😊',
+                'Sad': '😢',
+                'Angry': '😠',
+                'Fear': '😨',
+                'Disgust': '🤢',
+                'Surprise': '😲'
+            };
+            return emojis[emotion] || '😐';
+        }
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+        <span>${message}</span>
+      `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease-out reverse forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('currentUser');
+            showToast('Logged out successfully!', 'success');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin Dashboard - Manage users and view stress detection results">
+    <title>Admin Dashboard | Stress Detection in IT Professionals</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <span class="sidebar-brand-icon">🛡️</span>
+                <span class="sidebar-brand-text">Admin<span class="text-gradient">Panel</span></span>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="admin-dashboard.html" class="sidebar-link active">
+                    <span class="sidebar-link-icon"><i class="fas fa-tachometer-alt"></i></span>
+                    Dashboard
+                </a>
+
+                <div class="sidebar-section">Management</div>
+
+                <a href="#" class="sidebar-link" id="usersNavLink">
+                    <span class="sidebar-link-icon"><i class="fas fa-users"></i></span>
+                    User Management
+                </a>
+                <a href="#" class="sidebar-link" id="resultsNavLink">
+                    <span class="sidebar-link-icon"><i class="fas fa-chart-bar"></i></span>
+                    All Results
+                </a>
+                <a href="#" class="sidebar-link" id="datasetNavLink">
+                    <span class="sidebar-link-icon"><i class="fas fa-database"></i></span>
+                    Dataset View
+                </a>
+
+                <div class="sidebar-section">System</div>
+
+                <a href="admin-settings.html" class="sidebar-link">
+                    <span class="sidebar-link-icon"><i class="fas fa-cog"></i></span>
+                    Settings
+                </a>
+                <a href="index.html" class="sidebar-link" id="logoutBtn">
+                    <span class="sidebar-link-icon"><i class="fas fa-sign-out-alt"></i></span>
+                    Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div>
+                    <h1 class="dashboard-title">Admin <span class="text-gradient">Dashboard</span></h1>
+                    <p class="text-muted" style="margin-bottom: 0;">Manage users and monitor stress detection system</p>
+                </div>
+
+                <div class="dashboard-user">
+                    <span id="currentDate"></span>
+                    <div class="user-avatar" style="background: var(--gradient-accent);">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Stats Cards -->
+            <div class="stats-cards">
+                <div class="card stat-card-dashboard">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalUsers">0</h3>
+                        <p>Total Users</p>
+                    </div>
+                </div>
+
+                <div class="card stat-card-dashboard">
+                    <div class="stat-icon green">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="activeUsers">0</h3>
+                        <p>Active Users</p>
+                    </div>
+                </div>
+
+                <div class="card stat-card-dashboard">
+                    <div class="stat-icon yellow">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pendingUsers">0</h3>
+                        <p>Pending Activation</p>
+                    </div>
+                </div>
+
+                <div class="card stat-card-dashboard">
+                    <div class="stat-icon teal">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalScans">0</h3>
+                        <p>Total Scans</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Management Section -->
+            <div class="card mb-8" id="userManagementSection">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-users" style="color: var(--primary-400); margin-right: 0.5rem;"></i>
+                        User Management
+                    </h3>
+                    <div class="d-flex gap-2">
+                        <input type="text" class="form-input" placeholder="Search users..."
+                            style="width: 200px; padding: 0.5rem 1rem;" id="userSearch">
+                        <button class="btn btn-primary btn-sm" id="addDemoUsers">
+                            <i class="fas fa-plus"></i>
+                            Add Demo Users
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container" style="border: none; background: none;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Mobile</th>
+                                <th>Status</th>
+                                <th>Registered</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="7"
+                                    style="text-align: center; padding: 2rem; color: var(--dark-text-muted);">
+                                    <i class="fas fa-users"
+                                        style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                                    No users registered yet
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- All Results Section -->
+            <div class="card mb-8" id="allResultsSection">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-chart-bar" style="color: var(--accent-400); margin-right: 0.5rem;"></i>
+                        All Detection Results
+                    </h3>
+                    <div class="d-flex gap-2">
+                        <select class="form-input" style="width: 150px; padding: 0.5rem;" id="stressFilter">
+                            <option value="">All Levels</option>
+                            <option value="Low">Low Stress</option>
+                            <option value="Medium">Medium Stress</option>
+                            <option value="High">High Stress</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-container" style="border: none; background: none;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>User</th>
+                                <th>Emotion</th>
+                                <th>Stress Level</th>
+                                <th>Eye Strain</th>
+                                <th>Brow Tension</th>
+                                <th>Confidence</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                            <tr>
+                                <td colspan="7"
+                                    style="text-align: center; padding: 2rem; color: var(--dark-text-muted);">
+                                    <i class="fas fa-chart-pie"
+                                        style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                                    No detection results yet
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Dataset Section -->
+            <div class="card" id="datasetSection">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-database" style="color: var(--warning); margin-right: 0.5rem;"></i>
+                        Training Dataset
+                    </h3>
+                    <span class="badge badge-info">KNN Classifier</span>
+                </div>
+
+                <p style="color: var(--dark-text-muted); margin-bottom: 1.5rem;">
+                    Sample training data used for the stress detection model. The KNN classifier uses these labeled
+                    images to classify new inputs.
+                </p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem;"
+                    id="datasetGrid">
+                    <!-- Sample dataset items -->
+                </div>
+
+                <div class="card-footer">
+                    <div class="d-flex justify-between align-center">
+                        <span style="color: var(--dark-text-muted);">
+                            <i class="fas fa-info-circle"></i>
+                            Dataset based on research paper methodology
+                        </span>
+                        <button class="btn btn-secondary btn-sm">
+                            <i class="fas fa-download"></i>
+                            Export Dataset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Confirm Action</h3>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <p id="modalMessage">Are you sure you want to perform this action?</p>
+            <div class="d-flex gap-4 justify-center mt-6">
+                <button class="btn btn-secondary" id="modalCancel">Cancel</button>
+                <button class="btn btn-primary" id="modalConfirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="js/app.js"></script>
+    <script>
+        // Initialize admin dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current date
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', dateOptions);
+
+            // Load data
+            loadStats();
+            loadUsers();
+            loadResults();
+            loadDataset();
+        });
+
+        // Load statistics
+        function loadStats() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('activeUsers').textContent = users.filter(u => u.status === 'active').length;
+            document.getElementById('pendingUsers').textContent = users.filter(u => u.status === 'pending').length;
+            document.getElementById('totalScans').textContent = results.length;
+        }
+
+        // Load users table
+        function loadUsers() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const tableBody = document.getElementById('usersTableBody');
+
+            if (users.length === 0) {
+                tableBody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--dark-text-muted);">
+              <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+              No users registered yet. Click "Add Demo Users" to populate.
+            </td>
+          </tr>
+        `;
+                return;
+            }
+
+            tableBody.innerHTML = users.map((user, index) => `
+        <tr>
+          <td>#${(index + 1).toString().padStart(3, '0')}</td>
+          <td>
+            <div class="d-flex align-center gap-2">
+              <div class="user-avatar" style="width: 35px; height: 35px; font-size: 0.8rem;">
+                ${user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+              </div>
+              ${user.name}
+            </div>
+          </td>
+          <td>${user.email}</td>
+          <td>${user.mobile}</td>
+          <td>
+            <span class="badge ${user.status === 'active' ? 'badge-success' : 'badge-pending'}">
+              ${user.status === 'active' ? 'Active' : 'Pending'}
+            </span>
+          </td>
+          <td>${new Date(user.registeredAt).toLocaleDateString()}</td>
+          <td>
+            ${user.status === 'pending'
+                    ? `<button class="btn btn-success btn-sm" onclick="activateUser('${user.email}')">
+                  <i class="fas fa-check"></i> Activate
+                </button>`
+                    : `<button class="btn btn-danger btn-sm" onclick="deactivateUser('${user.email}')">
+                  <i class="fas fa-ban"></i> Deactivate
+                </button>`
+                }
+          </td>
+        </tr>
+      `).join('');
+        }
+
+        // Activate user
+        function activateUser(email) {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userIndex = users.findIndex(u => u.email === email);
+
+            if (userIndex !== -1) {
+                users[userIndex].status = 'active';
+                localStorage.setItem('users', JSON.stringify(users));
+                loadStats();
+                loadUsers();
+                showToast('User activated successfully!', 'success');
+            }
+        }
+
+        // Deactivate user
+        function deactivateUser(email) {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userIndex = users.findIndex(u => u.email === email);
+
+            if (userIndex !== -1) {
+                users[userIndex].status = 'pending';
+                localStorage.setItem('users', JSON.stringify(users));
+                loadStats();
+                loadUsers();
+                showToast('User deactivated', 'warning');
+            }
+        }
+
+        // Add demo users
+        document.getElementById('addDemoUsers').addEventListener('click', () => {
+            const demoUsers = [
+                { name: 'John Doe', email: 'demo@example.com', mobile: '9876543210', status: 'active', password: 'demo123', registeredAt: new Date().toISOString() },
+                { name: 'Jane Smith', email: 'jane@example.com', mobile: '9876543211', status: 'active', password: 'password123', registeredAt: new Date(Date.now() - 86400000).toISOString() },
+                { name: 'Bob Wilson', email: 'bob@example.com', mobile: '9876543212', status: 'pending', password: 'bob123', registeredAt: new Date(Date.now() - 172800000).toISOString() },
+                { name: 'Alice Brown', email: 'alice@example.com', mobile: '9876543213', status: 'active', password: 'alice123', registeredAt: new Date(Date.now() - 259200000).toISOString() },
+                { name: 'Charlie Davis', email: 'charlie@example.com', mobile: '9876543214', status: 'pending', password: 'charlie123', registeredAt: new Date(Date.now() - 345600000).toISOString() }
+            ];
+
+            const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+            const newUsers = demoUsers.filter(du => !existingUsers.some(eu => eu.email === du.email));
+
+            if (newUsers.length === 0) {
+                showToast('Demo users already exist', 'info');
+                return;
+            }
+
+            localStorage.setItem('users', JSON.stringify([...existingUsers, ...newUsers]));
+            loadStats();
+            loadUsers();
+            showToast(`Added ${newUsers.length} demo users!`, 'success');
+        });
+
+        // User search
+        document.getElementById('userSearch').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const filtered = users.filter(u =>
+                u.name.toLowerCase().includes(searchTerm) ||
+                u.email.toLowerCase().includes(searchTerm)
+            );
+
+            const tableBody = document.getElementById('usersTableBody');
+
+            if (filtered.length === 0) {
+                tableBody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--dark-text-muted);">
+              No users found matching "${searchTerm}"
+            </td>
+          </tr>
+        `;
+                return;
+            }
+
+            tableBody.innerHTML = filtered.map((user, index) => `
+        <tr>
+          <td>#${(index + 1).toString().padStart(3, '0')}</td>
+          <td>
+            <div class="d-flex align-center gap-2">
+              <div class="user-avatar" style="width: 35px; height: 35px; font-size: 0.8rem;">
+                ${user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+              </div>
+              ${user.name}
+            </div>
+          </td>
+          <td>${user.email}</td>
+          <td>${user.mobile}</td>
+          <td>
+            <span class="badge ${user.status === 'active' ? 'badge-success' : 'badge-pending'}">
+              ${user.status === 'active' ? 'Active' : 'Pending'}
+            </span>
+          </td>
+          <td>${new Date(user.registeredAt).toLocaleDateString()}</td>
+          <td>
+            ${user.status === 'pending'
+                    ? `<button class="btn btn-success btn-sm" onclick="activateUser('${user.email}')">
+                  <i class="fas fa-check"></i> Activate
+                </button>`
+                    : `<button class="btn btn-danger btn-sm" onclick="deactivateUser('${user.email}')">
+                  <i class="fas fa-ban"></i> Deactivate
+                </button>`
+                }
+          </td>
+        </tr>
+      `).join('');
+        });
+
+        // Load results
+        function loadResults() {
+            const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+            const tableBody = document.getElementById('resultsTableBody');
+
+            if (results.length === 0) {
+                tableBody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--dark-text-muted);">
+              <i class="fas fa-chart-pie" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+              No detection results yet
+            </td>
+          </tr>
+        `;
+                return;
+            }
+
+            const sortedResults = [...results].reverse();
+            tableBody.innerHTML = sortedResults.map(result => `
+        <tr>
+          <td>${new Date(result.timestamp).toLocaleString()}</td>
+          <td>${result.userName || 'Anonymous'}</td>
+          <td>
+            <span style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 1.2rem;">${getEmotionEmoji(result.emotion)}</span>
+              ${result.emotion}
+            </span>
+          </td>
+          <td>
+            <span class="badge badge-${result.stressLevel === 'Low' ? 'success' : result.stressLevel === 'Medium' ? 'warning' : 'danger'}">
+              ${result.stressLevel}
+            </span>
+          </td>
+          <td>${result.eyeStrain}</td>
+          <td>${result.browTension}</td>
+          <td>${result.confidence}%</td>
+        </tr>
+      `).join('');
+        }
+
+        // Filter results
+        document.getElementById('stressFilter').addEventListener('change', (e) => {
+            const filter = e.target.value;
+            const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+            const filtered = filter ? results.filter(r => r.stressLevel === filter) : results;
+
+            const tableBody = document.getElementById('resultsTableBody');
+
+            if (filtered.length === 0) {
+                tableBody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--dark-text-muted);">
+              No results found for "${filter}" stress level
+            </td>
+          </tr>
+        `;
+                return;
+            }
+
+            const sortedResults = [...filtered].reverse();
+            tableBody.innerHTML = sortedResults.map(result => `
+        <tr>
+          <td>${new Date(result.timestamp).toLocaleString()}</td>
+          <td>${result.userName || 'Anonymous'}</td>
+          <td>
+            <span style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 1.2rem;">${getEmotionEmoji(result.emotion)}</span>
+              ${result.emotion}
+            </span>
+          </td>
+          <td>
+            <span class="badge badge-${result.stressLevel === 'Low' ? 'success' : result.stressLevel === 'Medium' ? 'warning' : 'danger'}">
+              ${result.stressLevel}
+            </span>
+          </td>
+          <td>${result.eyeStrain}</td>
+          <td>${result.browTension}</td>
+          <td>${result.confidence}%</td>
+        </tr>
+      `).join('');
+        });
+
+        // Load dataset
+        function loadDataset() {
+            const datasetGrid = document.getElementById('datasetGrid');
+            const emotions = ['Neutral', 'Happy', 'Sad', 'Angry', 'Fear', 'Disgust'];
+            const stressLevels = ['Low', 'Medium', 'High'];
+
+            let html = '';
+
+            emotions.forEach((emotion, index) => {
+                const stressLevel = stressLevels[index % 3];
+                html += `
+          <div class="card" style="padding: 1rem; text-align: center;">
+            <div style="width: 100%; height: 100px; background: var(--gradient-primary); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 0.75rem;">
+              ${getEmotionEmoji(emotion)}
+            </div>
+            <div style="font-weight: 600; font-size: 0.9rem;">${emotion}</div>
+            <span class="badge badge-${stressLevel === 'Low' ? 'success' : stressLevel === 'Medium' ? 'warning' : 'danger'}" style="margin-top: 0.5rem;">
+              ${stressLevel} Stress
+            </span>
+          </div>
+        `;
+            });
+
+            datasetGrid.innerHTML = html;
+        }
+
+        function getEmotionEmoji(emotion) {
+            const emojis = {
+                'Neutral': '😐',
+                'Happy': '😊',
+                'Sad': '😢',
+                'Angry': '😠',
+                'Fear': '😨',
+                'Disgust': '🤢',
+                'Surprise': '😲'
+            };
+            return emojis[emotion] || '😐';
+        }
+
+        // Modal handling
+        const confirmModal = document.getElementById('confirmModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalCancel = document.getElementById('modalCancel');
+
+        closeModal.addEventListener('click', () => confirmModal.classList.remove('active'));
+        modalCancel.addEventListener('click', () => confirmModal.classList.remove('active'));
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+        <span>${message}</span>
+      `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease-out reverse forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Check admin authentication on page load
+        (function checkAdminAuth() {
+            const isAdminLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
+            if (!isAdminLoggedIn) {
+                // Redirect to admin login if not authenticated
+                window.location.href = 'admin-login.html';
+                return;
+            }
+        })();
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // Clear admin session
+            sessionStorage.removeItem('adminLoggedIn');
+            sessionStorage.removeItem('adminLoginTime');
+
+            showToast('Logged out successfully!', 'success');
+            setTimeout(() => {
+                window.location.href = 'admin-login.html';
+            }, 1000);
+        });
+    </script>
+</body>
+
+</html>

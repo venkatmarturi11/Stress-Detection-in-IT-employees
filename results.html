@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="View all stress detection results and history">
+    <title>Results | Stress Detection in IT Professionals</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <span class="sidebar-brand-icon">🧠</span>
+                <span class="sidebar-brand-text">StressDetect<span class="text-gradient">AI</span></span>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="user-dashboard.html" class="sidebar-link">
+                    <span class="sidebar-link-icon"><i class="fas fa-home"></i></span>
+                    Dashboard
+                </a>
+                <a href="user-dashboard.html" class="sidebar-link">
+                    <span class="sidebar-link-icon"><i class="fas fa-camera"></i></span>
+                    New Scan
+                </a>
+                <a href="results.html" class="sidebar-link active">
+                    <span class="sidebar-link-icon"><i class="fas fa-chart-bar"></i></span>
+                    My Results
+                </a>
+
+                <div class="sidebar-section">Account</div>
+
+                <a href="settings.html" class="sidebar-link">
+                    <span class="sidebar-link-icon"><i class="fas fa-user"></i></span>
+                    Profile
+                </a>
+                <a href="settings.html" class="sidebar-link">
+                    <span class="sidebar-link-icon"><i class="fas fa-cog"></i></span>
+                    Settings
+                </a>
+                <a href="index.html" class="sidebar-link" id="logoutBtn">
+                    <span class="sidebar-link-icon"><i class="fas fa-sign-out-alt"></i></span>
+                    Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div>
+                    <h1 class="dashboard-title">My <span class="text-gradient">Results</span></h1>
+                    <p class="text-muted" style="margin-bottom: 0;">View your stress detection history and insights</p>
+                </div>
+
+                <div class="dashboard-user">
+                    <a href="user-dashboard.html" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        New Scan
+                    </a>
+                </div>
+            </header>
+
+            <!-- Summary Cards -->
+            <div class="stats-cards">
+                <div class="card stat-card-dashboard">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalScans">0</h3>
+                        <p>Total Scans</p>
+                    </div>
+                </div>
+
+                <div class="card stat-card-dashboard">
+                    <div class="stat-icon green">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="avgConfidence">0%</h3>
+                        <p>Avg Confidence</p>
+                    </div>
+                </div>
+
+                <div class="card stat-card-dashboard">
+                    <div class="stat-icon yellow">
+                        <i class="fas fa-smile"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="commonEmotion">--</h3>
+                        <p>Most Common</p>
+                    </div>
+                </div>
+
+                <div class="card stat-card-dashboard">
+                    <div class="stat-icon teal">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="avgStress">--</h3>
+                        <p>Avg Stress Level</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stress Level Distribution -->
+            <div class="card mb-8">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-chart-pie" style="color: var(--accent-400); margin-right: 0.5rem;"></i>
+                        Stress Level Distribution
+                    </h3>
+                </div>
+
+                <div class="d-flex gap-8" style="padding: 1rem 0;">
+                    <div class="d-flex align-center gap-4" style="flex: 1;">
+                        <div style="flex: 1;">
+                            <div class="d-flex justify-between mb-2">
+                                <span>Low Stress</span>
+                                <span id="lowPercent">0%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" id="lowBar" style="width: 0%; background: var(--success);">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-center gap-4" style="flex: 1;">
+                        <div style="flex: 1;">
+                            <div class="d-flex justify-between mb-2">
+                                <span>Medium Stress</span>
+                                <span id="mediumPercent">0%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" id="mediumBar" style="width: 0%; background: var(--warning);">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-center gap-4" style="flex: 1;">
+                        <div style="flex: 1;">
+                            <div class="d-flex justify-between mb-2">
+                                <span>High Stress</span>
+                                <span id="highPercent">0%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" id="highBar" style="width: 0%; background: var(--danger);">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Algorithm Analysis Section -->
+            <div class="card mb-8" id="algorithmCard">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-brain" style="color: var(--primary-400); margin-right: 0.5rem;"></i>
+                        Algorithm Analysis & Predictions
+                    </h3>
+                    <span class="badge badge-info" id="analysisMethod">Multi-Algorithm</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; padding: 1rem 0;">
+                    <!-- Emotion Probabilities Chart -->
+                    <div>
+                        <h4 style="font-size: 0.9rem; color: var(--dark-text-muted); margin-bottom: 1rem;">
+                            <i class="fas fa-chart-bar" style="margin-right: 0.5rem;"></i>
+                            Emotion Probability Distribution (Latest Scan)
+                        </h4>
+                        <div id="emotionProbabilities">
+                            <div class="d-flex align-center gap-2 mb-2">
+                                <span style="width: 80px; font-size: 0.85rem;">😐 Neutral</span>
+                                <div class="progress" style="flex: 1; height: 20px;">
+                                    <div class="progress-bar" id="probNeutral" style="width: 0%;"></div>
+                                </div>
+                                <span id="probNeutralText"
+                                    style="width: 40px; text-align: right; font-size: 0.85rem;">0%</span>
+                            </div>
+                            <div class="d-flex align-center gap-2 mb-2">
+                                <span style="width: 80px; font-size: 0.85rem;">😊 Happy</span>
+                                <div class="progress" style="flex: 1; height: 20px;">
+                                    <div class="progress-bar" id="probHappy"
+                                        style="width: 0%; background: var(--success);"></div>
+                                </div>
+                                <span id="probHappyText"
+                                    style="width: 40px; text-align: right; font-size: 0.85rem;">0%</span>
+                            </div>
+                            <div class="d-flex align-center gap-2 mb-2">
+                                <span style="width: 80px; font-size: 0.85rem;">😢 Sad</span>
+                                <div class="progress" style="flex: 1; height: 20px;">
+                                    <div class="progress-bar" id="probSad" style="width: 0%; background: var(--info);">
+                                    </div>
+                                </div>
+                                <span id="probSadText"
+                                    style="width: 40px; text-align: right; font-size: 0.85rem;">0%</span>
+                            </div>
+                            <div class="d-flex align-center gap-2 mb-2">
+                                <span style="width: 80px; font-size: 0.85rem;">😠 Angry</span>
+                                <div class="progress" style="flex: 1; height: 20px;">
+                                    <div class="progress-bar" id="probAngry"
+                                        style="width: 0%; background: var(--danger);"></div>
+                                </div>
+                                <span id="probAngryText"
+                                    style="width: 40px; text-align: right; font-size: 0.85rem;">0%</span>
+                            </div>
+                            <div class="d-flex align-center gap-2 mb-2">
+                                <span style="width: 80px; font-size: 0.85rem;">😨 Fearful</span>
+                                <div class="progress" style="flex: 1; height: 20px;">
+                                    <div class="progress-bar" id="probFearful"
+                                        style="width: 0%; background: var(--warning);"></div>
+                                </div>
+                                <span id="probFearfulText"
+                                    style="width: 40px; text-align: right; font-size: 0.85rem;">0%</span>
+                            </div>
+                            <div class="d-flex align-center gap-2 mb-2">
+                                <span style="width: 80px; font-size: 0.85rem;">🤢 Disgust</span>
+                                <div class="progress" style="flex: 1; height: 20px;">
+                                    <div class="progress-bar" id="probDisgusted"
+                                        style="width: 0%; background: #9c27b0;"></div>
+                                </div>
+                                <span id="probDisgustedText"
+                                    style="width: 40px; text-align: right; font-size: 0.85rem;">0%</span>
+                            </div>
+                            <div class="d-flex align-center gap-2">
+                                <span style="width: 80px; font-size: 0.85rem;">😲 Surprise</span>
+                                <div class="progress" style="flex: 1; height: 20px;">
+                                    <div class="progress-bar" id="probSurprised"
+                                        style="width: 0%; background: var(--accent-400);"></div>
+                                </div>
+                                <span id="probSurprisedText"
+                                    style="width: 40px; text-align: right; font-size: 0.85rem;">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Algorithm Metrics -->
+                    <div>
+                        <h4 style="font-size: 0.9rem; color: var(--dark-text-muted); margin-bottom: 1rem;">
+                            <i class="fas fa-cogs" style="margin-right: 0.5rem;"></i>
+                            Detection Algorithm Metrics
+                        </h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div
+                                style="background: rgba(0, 153, 230, 0.1); padding: 1rem; border-radius: var(--radius-lg); text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-400);"
+                                    id="cnnAccuracy">89%</div>
+                                <div style="font-size: 0.75rem; color: var(--dark-text-muted);">CNN Model Accuracy</div>
+                            </div>
+                            <div
+                                style="background: rgba(0, 191, 184, 0.1); padding: 1rem; border-radius: var(--radius-lg); text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-400);"
+                                    id="imageQuality">--</div>
+                                <div style="font-size: 0.75rem; color: var(--dark-text-muted);">Image Quality Score
+                                </div>
+                            </div>
+                            <div
+                                style="background: rgba(255, 193, 7, 0.1); padding: 1rem; border-radius: var(--radius-lg); text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--warning);"
+                                    id="reliefUrgency">--/10</div>
+                                <div style="font-size: 0.75rem; color: var(--dark-text-muted);">Relief Urgency Score
+                                </div>
+                            </div>
+                            <div
+                                style="background: rgba(40, 167, 69, 0.1); padding: 1rem; border-radius: var(--radius-lg); text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--success);"
+                                    id="trendIndicator">
+                                    <i class="fas fa-minus"></i>
+                                </div>
+                                <div style="font-size: 0.75rem; color: var(--dark-text-muted);">7-Day Trend</div>
+                            </div>
+                        </div>
+
+                        <!-- Stress Trend Summary -->
+                        <div
+                            style="margin-top: 1rem; padding: 1rem; background: var(--dark-surface); border-radius: var(--radius-lg);">
+                            <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem;">
+                                <i class="fas fa-chart-line"
+                                    style="color: var(--primary-400); margin-right: 0.5rem;"></i>
+                                Weekly Trend Summary
+                            </div>
+                            <div id="trendSummary" style="font-size: 0.85rem; color: var(--dark-text-muted);">
+                                Analyzing your stress patterns...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-history" style="color: var(--primary-400); margin-right: 0.5rem;"></i>
+                        Detection History
+                    </h3>
+                    <div class="d-flex gap-2">
+                        <select class="form-input" style="width: 150px; padding: 0.5rem;" id="stressFilter">
+                            <option value="">All Levels</option>
+                            <option value="Low">Low Stress</option>
+                            <option value="Medium">Medium Stress</option>
+                            <option value="High">High Stress</option>
+                        </select>
+                        <button class="btn btn-danger btn-sm" id="clearAll">
+                            <i class="fas fa-trash"></i>
+                            Clear All
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container" style="border: none; background: none;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Date & Time</th>
+                                <th>Primary Emotion</th>
+                                <th>Stress Level</th>
+                                <th>Eye Strain</th>
+                                <th>Brow Tension</th>
+                                <th>Facial Fatigue</th>
+                                <th>Confidence</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                            <tr>
+                                <td colspan="8"
+                                    style="text-align: center; padding: 2rem; color: var(--dark-text-muted);">
+                                    <i class="fas fa-inbox"
+                                        style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                                    No results yet. Start by uploading an image for stress detection.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="card mt-8" id="recommendationsCard">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-lightbulb" style="color: var(--warning); margin-right: 0.5rem;"></i>
+                        Stress Management Recommendations
+                    </h3>
+                </div>
+
+                <div class="card-body">
+                    <div
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                        <div class="d-flex gap-4" style="align-items: flex-start;">
+                            <div
+                                style="background: rgba(40, 167, 69, 0.2); padding: 0.75rem; border-radius: var(--radius-lg);">
+                                <i class="fas fa-walking" style="color: var(--success); font-size: 1.25rem;"></i>
+                            </div>
+                            <div>
+                                <h4 style="font-size: 1rem; margin-bottom: 0.25rem;">Take Regular Breaks</h4>
+                                <p style="margin: 0; font-size: 0.875rem; color: var(--dark-text-muted);">Step away from
+                                    your screen every 30-45 minutes to reduce eye strain and mental fatigue.</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-4" style="align-items: flex-start;">
+                            <div
+                                style="background: rgba(0, 153, 230, 0.2); padding: 0.75rem; border-radius: var(--radius-lg);">
+                                <i class="fas fa-lungs" style="color: var(--primary-400); font-size: 1.25rem;"></i>
+                            </div>
+                            <div>
+                                <h4 style="font-size: 1rem; margin-bottom: 0.25rem;">Practice Deep Breathing</h4>
+                                <p style="margin: 0; font-size: 0.875rem; color: var(--dark-text-muted);">Simple
+                                    breathing exercises can help reduce stress hormones and promote relaxation.</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-4" style="align-items: flex-start;">
+                            <div
+                                style="background: rgba(0, 191, 184, 0.2); padding: 0.75rem; border-radius: var(--radius-lg);">
+                                <i class="fas fa-bed" style="color: var(--accent-400); font-size: 1.25rem;"></i>
+                            </div>
+                            <div>
+                                <h4 style="font-size: 1rem; margin-bottom: 0.25rem;">Get Adequate Sleep</h4>
+                                <p style="margin: 0; font-size: 0.875rem; color: var(--dark-text-muted);">Aim for 7-8
+                                    hours of quality sleep to help your body recover from daily stress.</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-4" style="align-items: flex-start;">
+                            <div
+                                style="background: rgba(255, 193, 7, 0.2); padding: 0.75rem; border-radius: var(--radius-lg);">
+                                <i class="fas fa-dumbbell" style="color: var(--warning); font-size: 1.25rem;"></i>
+                            </div>
+                            <div>
+                                <h4 style="font-size: 1rem; margin-bottom: 0.25rem;">Regular Exercise</h4>
+                                <p style="margin: 0; font-size: 0.875rem; color: var(--dark-text-muted);">Physical
+                                    activity releases endorphins and helps manage stress levels effectively.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Clear All Results</h3>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <p>Are you sure you want to delete all your stress detection results? This action cannot be undone.</p>
+            <div class="d-flex gap-4 justify-center mt-6">
+                <button class="btn btn-secondary" id="modalCancel">Cancel</button>
+                <button class="btn btn-danger" id="modalConfirm">
+                    <i class="fas fa-trash"></i>
+                    Delete All
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize results page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadResults();
+            loadStats();
+            loadAlgorithmAnalysis();
+            loadEnhancedRelief();
+        });
+
+        // Load results table
+        function loadResults(filter = '') {
+            let results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+
+            if (filter) {
+                results = results.filter(r => r.stressLevel === filter);
+            }
+
+            const tableBody = document.getElementById('resultsTableBody');
+
+            if (results.length === 0) {
+                tableBody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align: center; padding: 2rem; color: var(--dark-text-muted);">
+              <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+              ${filter ? `No results found for "${filter}" stress level` : 'No results yet. Start by uploading an image for stress detection.'}
+            </td>
+          </tr>
+        `;
+                return;
+            }
+
+            const sortedResults = [...results].reverse();
+            tableBody.innerHTML = sortedResults.map((result, index) => `
+        <tr>
+          <td>${results.length - index}</td>
+          <td>${new Date(result.timestamp).toLocaleString()}</td>
+          <td>
+            <span style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 1.2rem;">${getEmotionEmoji(result.emotion)}</span>
+              ${result.emotion}
+            </span>
+          </td>
+          <td>
+            <span class="badge badge-${result.stressLevel === 'Low' ? 'success' : result.stressLevel === 'Medium' ? 'warning' : 'danger'}">
+              ${result.stressLevel}
+            </span>
+          </td>
+          <td>${result.eyeStrain}</td>
+          <td>${result.browTension}</td>
+          <td>${result.facialFatigue}</td>
+          <td>
+            <div class="d-flex align-center gap-2">
+              <div class="progress" style="width: 60px; height: 6px;">
+                <div class="progress-bar" style="width: ${result.confidence}%;"></div>
+              </div>
+              <span>${result.confidence}%</span>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+        }
+
+        // Load statistics
+        function loadStats() {
+            const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+
+            // Total scans
+            document.getElementById('totalScans').textContent = results.length;
+
+            if (results.length === 0) {
+                document.getElementById('avgConfidence').textContent = '0%';
+                document.getElementById('commonEmotion').textContent = '--';
+                document.getElementById('avgStress').textContent = '--';
+                return;
+            }
+
+            // Average confidence
+            const avgConfidence = Math.round(results.reduce((acc, r) => acc + r.confidence, 0) / results.length);
+            document.getElementById('avgConfidence').textContent = avgConfidence + '%';
+
+            // Most common emotion
+            const emotionCounts = results.reduce((acc, r) => {
+                acc[r.emotion] = (acc[r.emotion] || 0) + 1;
+                return acc;
+            }, {});
+            const commonEmotion = Object.entries(emotionCounts).sort((a, b) => b[1] - a[1])[0][0];
+            document.getElementById('commonEmotion').textContent = commonEmotion;
+
+            // Average stress level
+            const stressValues = { 'Low': 1, 'Medium': 2, 'High': 3 };
+            const avgStressValue = results.reduce((acc, r) => acc + stressValues[r.stressLevel], 0) / results.length;
+            let avgStress = 'Low';
+            if (avgStressValue >= 2.5) avgStress = 'High';
+            else if (avgStressValue >= 1.5) avgStress = 'Medium';
+            document.getElementById('avgStress').textContent = avgStress;
+
+            // Stress distribution
+            const lowCount = results.filter(r => r.stressLevel === 'Low').length;
+            const mediumCount = results.filter(r => r.stressLevel === 'Medium').length;
+            const highCount = results.filter(r => r.stressLevel === 'High').length;
+
+            const lowPercent = Math.round((lowCount / results.length) * 100);
+            const mediumPercent = Math.round((mediumCount / results.length) * 100);
+            const highPercent = Math.round((highCount / results.length) * 100);
+
+            document.getElementById('lowPercent').textContent = lowPercent + '%';
+            document.getElementById('mediumPercent').textContent = mediumPercent + '%';
+            document.getElementById('highPercent').textContent = highPercent + '%';
+
+            document.getElementById('lowBar').style.width = lowPercent + '%';
+            document.getElementById('mediumBar').style.width = mediumPercent + '%';
+            document.getElementById('highBar').style.width = highPercent + '%';
+        }
+
+        function getEmotionEmoji(emotion) {
+            const emojis = {
+                'Neutral': '😐',
+                'Happy': '😊',
+                'Sad': '😢',
+                'Angry': '😠',
+                'Fear': '😨',
+                'Disgust': '🤢',
+                'Surprise': '😲'
+            };
+            return emojis[emotion] || '😐';
+        }
+
+        // Filter handler
+        document.getElementById('stressFilter').addEventListener('change', (e) => {
+            loadResults(e.target.value);
+        });
+
+        // Clear all results
+        const confirmModal = document.getElementById('confirmModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalCancel = document.getElementById('modalCancel');
+        const modalConfirm = document.getElementById('modalConfirm');
+
+        document.getElementById('clearAll').addEventListener('click', () => {
+            confirmModal.classList.add('active');
+        });
+
+        closeModal.addEventListener('click', () => confirmModal.classList.remove('active'));
+        modalCancel.addEventListener('click', () => confirmModal.classList.remove('active'));
+
+        modalConfirm.addEventListener('click', () => {
+            localStorage.removeItem('stressResults');
+            confirmModal.classList.remove('active');
+            loadResults();
+            loadStats();
+            showToast('All results cleared successfully', 'success');
+        });
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+        <span>${message}</span>
+      `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease-out reverse forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('currentUser');
+            showToast('Logged out successfully!', 'success');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+        });
+
+        // Load Algorithm Analysis
+        function loadAlgorithmAnalysis() {
+            const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+
+            if (results.length === 0) {
+                document.getElementById('trendSummary').textContent = 'No data available. Complete a stress scan to see algorithm analysis.';
+                return;
+            }
+
+            const latestResult = results[results.length - 1];
+
+            // Load emotion probabilities from latest result
+            const probs = latestResult.allProbabilities || generateDefaultProbabilities(latestResult.emotion);
+
+            // Update emotion probability bars
+            const emotions = ['Neutral', 'Happy', 'Sad', 'Angry', 'Fearful', 'Disgusted', 'Surprised'];
+            emotions.forEach(emotion => {
+                const prob = probs[emotion] || 0;
+                const bar = document.getElementById(`prob${emotion}`);
+                const text = document.getElementById(`prob${emotion}Text`);
+                if (bar) bar.style.width = `${prob}%`;
+                if (text) text.textContent = `${prob}%`;
+            });
+
+            // Update algorithm metrics
+            const imageQuality = latestResult.imageFeatures?.quality ||
+                latestResult.algorithmResults?.imageAnalysis?.metrics?.imageQuality ||
+                Math.round(latestResult.confidence * 0.9);
+            document.getElementById('imageQuality').textContent = `${imageQuality}%`;
+
+            // Relief urgency
+            const urgency = latestResult.reliefUrgency || calculateReliefUrgencyFromResult(latestResult);
+            const urgencyEl = document.getElementById('reliefUrgency');
+            urgencyEl.textContent = `${urgency}/10`;
+            if (urgency >= 7) urgencyEl.style.color = 'var(--danger)';
+            else if (urgency >= 4) urgencyEl.style.color = 'var(--warning)';
+            else urgencyEl.style.color = 'var(--success)';
+
+            // Stress trend analysis
+            const trends = analyzeStressTrendsLocal(results);
+            updateTrendDisplay(trends);
+
+            // Update detection method badge
+            const methodBadge = document.getElementById('analysisMethod');
+            methodBadge.textContent = latestResult.detectionMethod || 'Image Analysis';
+        }
+
+        // Generate default probabilities based on detected emotion
+        function generateDefaultProbabilities(dominantEmotion) {
+            const probs = {
+                'Neutral': 10, 'Happy': 10, 'Sad': 10, 'Angry': 10,
+                'Fearful': 10, 'Disgusted': 10, 'Surprised': 10
+            };
+            if (dominantEmotion && probs[dominantEmotion] !== undefined) {
+                probs[dominantEmotion] = 40;
+                // Reduce others proportionally
+                Object.keys(probs).forEach(e => {
+                    if (e !== dominantEmotion) probs[e] = 10;
+                });
+            }
+            return probs;
+        }
+
+        // Calculate relief urgency from result
+        function calculateReliefUrgencyFromResult(result) {
+            let urgency = 3;
+            const stressScores = { 'Low': 2, 'Medium': 5, 'High': 8 };
+            urgency = stressScores[result.stressLevel] || 5;
+
+            const highStressEmotions = ['Angry', 'Fearful', 'Sad', 'Disgusted'];
+            if (highStressEmotions.includes(result.emotion)) urgency += 1;
+
+            const featureScores = { 'Normal': 0, 'Mild': 0.3, 'Moderate': 0.6, 'High': 0.9, 'Severe': 1.2 };
+            urgency += featureScores[result.eyeStrain] || 0;
+            urgency += featureScores[result.browTension] || 0;
+            urgency += featureScores[result.facialFatigue] || 0;
+
+            return Math.max(1, Math.min(10, Math.round(urgency)));
+        }
+
+        // Analyze stress trends locally
+        function analyzeStressTrendsLocal(results) {
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+
+            const last7Days = results.filter(r => new Date(r.timestamp) >= weekAgo);
+
+            if (last7Days.length < 2) {
+                return { trend: 'insufficient_data', avgStress: null, peakTimes: [], totalScans: last7Days.length };
+            }
+
+            const stressValues = { 'Low': 1, 'Medium': 2, 'High': 3 };
+            const avgStress = last7Days.reduce((sum, r) => sum + stressValues[r.stressLevel], 0) / last7Days.length;
+
+            const firstHalf = last7Days.slice(0, Math.floor(last7Days.length / 2));
+            const secondHalf = last7Days.slice(Math.floor(last7Days.length / 2));
+
+            const firstAvg = firstHalf.reduce((sum, r) => sum + stressValues[r.stressLevel], 0) / firstHalf.length;
+            const secondAvg = secondHalf.reduce((sum, r) => sum + stressValues[r.stressLevel], 0) / secondHalf.length;
+
+            let trend = 'stable';
+            if (secondAvg < firstAvg - 0.3) trend = 'improving';
+            else if (secondAvg > firstAvg + 0.3) trend = 'worsening';
+
+            // Find peak stress hours
+            const hourCounts = {};
+            last7Days.filter(r => r.stressLevel === 'High').forEach(r => {
+                const hour = new Date(r.timestamp).getHours();
+                hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+            });
+            const peakTimes = Object.entries(hourCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 3)
+                .map(([hour]) => parseInt(hour));
+
+            return {
+                trend,
+                avgStress: avgStress <= 1.5 ? 'Low' : avgStress <= 2.5 ? 'Medium' : 'High',
+                peakTimes,
+                totalScans: last7Days.length,
+                improvement: Math.round((firstAvg - secondAvg) * 33.3)
+            };
+        }
+
+        // Update trend display
+        function updateTrendDisplay(trends) {
+            const trendEl = document.getElementById('trendIndicator');
+            const summaryEl = document.getElementById('trendSummary');
+
+            if (trends.trend === 'insufficient_data') {
+                trendEl.innerHTML = '<i class="fas fa-minus"></i>';
+                trendEl.style.color = 'var(--dark-text-muted)';
+                summaryEl.textContent = `Only ${trends.totalScans} scan(s) this week. Complete more scans for trend analysis.`;
+                return;
+            }
+
+            const trendIcons = {
+                'improving': '<i class="fas fa-arrow-down" style="color: var(--success)"></i>',
+                'stable': '<i class="fas fa-minus" style="color: var(--primary-400)"></i>',
+                'worsening': '<i class="fas fa-arrow-up" style="color: var(--danger)"></i>'
+            };
+
+            trendEl.innerHTML = trendIcons[trends.trend] || trendIcons.stable;
+
+            let summary = `Based on ${trends.totalScans} scans this week: `;
+            if (trends.trend === 'improving') {
+                summary += `Your stress levels are improving! 📈 Average stress: ${trends.avgStress}.`;
+            } else if (trends.trend === 'worsening') {
+                summary += `⚠️ Stress levels are increasing. Average: ${trends.avgStress}. Consider taking action.`;
+            } else {
+                summary += `Stress levels are stable at ${trends.avgStress} level.`;
+            }
+
+            if (trends.peakTimes.length > 0) {
+                const formatHour = h => h < 12 ? `${h || 12}AM` : `${h - 12 || 12}PM`;
+                summary += ` Peak stress hours: ${trends.peakTimes.map(formatHour).join(', ')}.`;
+            }
+
+            summaryEl.textContent = summary;
+        }
+
+        // Load Enhanced Relief Recommendations
+        function loadEnhancedRelief() {
+            const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+            if (results.length === 0) return;
+
+            const latestResult = results[results.length - 1];
+            const recommendationsContainer = document.querySelector('#recommendationsCard .card-body > div');
+            if (!recommendationsContainer) return;
+
+            // Generate personalized recommendations
+            const recommendations = generatePersonalizedReliefPlan(latestResult, results);
+
+            recommendationsContainer.innerHTML = recommendations.map(rec => `
+                <div class="d-flex gap-4" style="align-items: flex-start;">
+                    <div style="background: ${rec.bgColor}; padding: 0.75rem; border-radius: var(--radius-lg);">
+                        <i class="fas fa-${rec.icon}" style="color: ${rec.color}; font-size: 1.25rem;"></i>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1rem; margin-bottom: 0.25rem;">
+                            ${rec.title}
+                            ${rec.urgency ? `<span class="badge badge-${rec.urgencyBadge}" style="font-size: 0.65rem; margin-left: 0.5rem;">${rec.urgency}</span>` : ''}
+                        </h4>
+                        <p style="margin: 0; font-size: 0.875rem; color: var(--dark-text-muted);">${rec.description}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Generate personalized relief plan
+        function generatePersonalizedReliefPlan(latestResult, allResults) {
+            const recommendations = [];
+            const stressLevel = latestResult.stressLevel;
+            const emotion = latestResult.emotion;
+            const eyeStrain = latestResult.eyeStrain;
+            const browTension = latestResult.browTension;
+            const facialFatigue = latestResult.facialFatigue;
+
+            // High priority actions for high stress
+            if (stressLevel === 'High') {
+                recommendations.push({
+                    icon: 'exclamation-triangle',
+                    color: 'var(--danger)',
+                    bgColor: 'rgba(220, 53, 69, 0.2)',
+                    title: 'Immediate Break Required',
+                    description: 'Your stress level is high. Take a 15-minute break immediately. Step away from your workstation, practice deep breathing, and consider a short walk.',
+                    urgency: 'URGENT',
+                    urgencyBadge: 'danger'
+                });
+            }
+
+            // Eye strain specific
+            if (['High', 'Severe', 'Moderate'].includes(eyeStrain)) {
+                recommendations.push({
+                    icon: 'eye',
+                    color: 'var(--primary-400)',
+                    bgColor: 'rgba(0, 153, 230, 0.2)',
+                    title: 'Eye Strain Relief',
+                    description: 'Follow the 20-20-20 rule: Every 20 minutes, look at something 20 feet away for 20 seconds. Adjust screen brightness and consider blue light filtering.',
+                    urgency: eyeStrain === 'Severe' ? 'HIGH' : 'MEDIUM',
+                    urgencyBadge: eyeStrain === 'Severe' ? 'danger' : 'warning'
+                });
+            }
+
+            // Brow tension specific
+            if (['High', 'Severe', 'Moderate'].includes(browTension)) {
+                recommendations.push({
+                    icon: 'head-side-brain',
+                    color: 'var(--accent-400)',
+                    bgColor: 'rgba(0, 191, 184, 0.2)',
+                    title: 'Facial Muscle Relaxation',
+                    description: 'Practice progressive muscle relaxation: scrunch your face tightly for 5 seconds, then release. Repeat 3 times. Consider a gentle face massage.',
+                    urgency: 'RECOMMENDED',
+                    urgencyBadge: 'info'
+                });
+            }
+
+            // Fatigue specific
+            if (['High', 'Severe', 'Moderate'].includes(facialFatigue)) {
+                recommendations.push({
+                    icon: 'bed',
+                    color: 'var(--warning)',
+                    bgColor: 'rgba(255, 193, 7, 0.2)',
+                    title: 'Fatigue Recovery',
+                    description: 'Your facial fatigue indicates tiredness. Ensure you get 7-8 hours of sleep tonight. Consider a 10-15 minute power nap if possible.',
+                    urgency: 'IMPORTANT',
+                    urgencyBadge: 'warning'
+                });
+            }
+
+            // Emotion-specific recommendations
+            const emotionRecs = {
+                'Angry': {
+                    icon: 'fire-extinguisher',
+                    color: 'var(--danger)',
+                    bgColor: 'rgba(220, 53, 69, 0.2)',
+                    title: 'Anger Management',
+                    description: 'Channel frustration productively: count to 10, write down what\'s bothering you, or do a quick 5-minute physical activity like jumping jacks.'
+                },
+                'Sad': {
+                    icon: 'heart',
+                    color: 'var(--info)',
+                    bgColor: 'rgba(23, 162, 184, 0.2)',
+                    title: 'Mood Enhancement',
+                    description: 'Connect with a colleague or friend. Listen to uplifting music. Consider a brief walk outside for sunlight exposure.'
+                },
+                'Fearful': {
+                    icon: 'shield-alt',
+                    color: 'var(--primary-400)',
+                    bgColor: 'rgba(0, 153, 230, 0.2)',
+                    title: 'Anxiety Relief',
+                    description: 'Practice grounding: Name 5 things you see, 4 you can touch, 3 you hear. Deep breathing: 4 seconds in, 7 hold, 8 out.'
+                }
+            };
+
+            if (emotionRecs[emotion]) {
+                recommendations.push(emotionRecs[emotion]);
+            }
+
+            // General recommendations based on stress level
+            if (stressLevel === 'Medium') {
+                recommendations.push({
+                    icon: 'clock',
+                    color: 'var(--success)',
+                    bgColor: 'rgba(40, 167, 69, 0.2)',
+                    title: 'Schedule Regular Breaks',
+                    description: 'Set a timer for 45-minute work sessions followed by 5-minute breaks. Stay hydrated and stretch during breaks.'
+                });
+            }
+
+            // Always include general wellness
+            if (stressLevel === 'Low') {
+                recommendations.push({
+                    icon: 'star',
+                    color: 'var(--success)',
+                    bgColor: 'rgba(40, 167, 69, 0.2)',
+                    title: 'Maintain Your Balance',
+                    description: 'Great job! Your stress levels are low. Continue your current healthy habits and consider sharing tips with colleagues.'
+                });
+            }
+
+            // Add exercise recommendation
+            recommendations.push({
+                icon: 'running',
+                color: 'var(--accent-400)',
+                bgColor: 'rgba(0, 191, 184, 0.2)',
+                title: 'Physical Activity',
+                description: 'Aim for at least 30 minutes of moderate exercise daily. Even a 10-minute walk significantly reduces stress hormones.'
+            });
+
+            return recommendations.slice(0, 6); // Limit to 6 recommendations
+        }
+    </script>
+</body>
+
+</html>

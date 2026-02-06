@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Register for Stress Detection System - Create your account to access AI-powered stress analysis">
+    <title>Register | Stress Detection in IT Professionals</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="nav-brand">
+                <span class="nav-brand-icon">🧠</span>
+                <span>StressDetect<span class="text-gradient">AI</span></span>
+            </a>
+
+            <div class="nav-actions">
+                <a href="login.html" class="btn btn-secondary">Login</a>
+                <a href="index.html" class="btn btn-primary">
+                    <i class="fas fa-home"></i>
+                    Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Registration Page -->
+    <main class="auth-page">
+        <div class="auth-container animate-slideUp">
+            <div class="auth-card card">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h1 class="auth-title">Create Account</h1>
+                    <p class="auth-subtitle">Join the Stress Detection System for IT Professionals</p>
+                </div>
+
+                <!-- Alert Message (hidden by default) -->
+                <div class="alert alert-info d-none" id="alertMessage">
+                    <i class="fas fa-info-circle"></i>
+                    <span id="alertText"></span>
+                </div>
+
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label required" for="fullName">Full Name</label>
+                        <div class="input-group">
+                            <span class="input-group-icon"><i class="fas fa-user"></i></span>
+                            <input type="text" id="fullName" name="fullName" class="form-input has-icon"
+                                placeholder="Enter your full name" required autocomplete="name">
+                        </div>
+                        <span class="form-error d-none" id="nameError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required" for="email">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-icon"><i class="fas fa-envelope"></i></span>
+                            <input type="email" id="email" name="email" class="form-input has-icon"
+                                placeholder="you@example.com" required autocomplete="email">
+                        </div>
+                        <span class="form-error d-none" id="emailError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required" for="mobile">Mobile Number</label>
+                        <div class="input-group">
+                            <span class="input-group-icon"><i class="fas fa-phone"></i></span>
+                            <input type="tel" id="mobile" name="mobile" class="form-input has-icon"
+                                placeholder="Enter your mobile number" required autocomplete="tel">
+                        </div>
+                        <span class="form-error d-none" id="mobileError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required" for="password">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-icon"><i class="fas fa-lock"></i></span>
+                            <input type="password" id="password" name="password" class="form-input has-icon"
+                                placeholder="Create a strong password" required autocomplete="new-password"
+                                style="border-radius: var(--radius-lg) 0 0 var(--radius-lg);">
+                            <span class="input-group-addon" id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                        <span class="form-hint">Must be at least 6 characters</span>
+                        <span class="form-error d-none" id="passwordError"></span>
+
+                        <!-- Password Strength Indicator -->
+                        <div class="mt-4">
+                            <div class="progress">
+                                <div class="progress-bar" id="passwordStrength" style="width: 0%;"></div>
+                            </div>
+                            <span class="form-hint" id="passwordStrengthText">Password strength: Enter a password</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required" for="confirmPassword">Confirm Password</label>
+                        <div class="input-group">
+                            <span class="input-group-icon"><i class="fas fa-lock"></i></span>
+                            <input type="password" id="confirmPassword" name="confirmPassword"
+                                class="form-input has-icon" placeholder="Re-enter your password" required
+                                autocomplete="new-password">
+                        </div>
+                        <span class="form-error d-none" id="confirmPasswordError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-checkbox">
+                            <input type="checkbox" id="termsCheckbox" required>
+                            <span>I agree to the <a href="#" style="color: var(--primary-400);">Terms of Service</a> and
+                                <a href="#" style="color: var(--primary-400);">Privacy Policy</a></span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-full btn-lg" id="submitBtn">
+                        <i class="fas fa-user-plus"></i>
+                        Create Account
+                    </button>
+                </form>
+
+                <div class="auth-divider">or</div>
+
+                <div class="auth-footer">
+                    Already have an account? <a href="login.html">Sign In</a>
+                </div>
+            </div>
+
+            <!-- Info Card -->
+            <div class="card mt-6" style="padding: 1.5rem; text-align: center;">
+                <div class="d-flex align-center justify-center gap-2">
+                    <i class="fas fa-info-circle" style="color: var(--warning);"></i>
+                    <span style="color: var(--dark-text-muted); font-size: 0.9rem;">
+                        <strong>Note:</strong> After registration, your account needs to be activated by an admin before
+                        you can log in.
+                    </span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script>
+        // Password visibility toggle
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            togglePassword.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+
+        // Password strength indicator
+        const passwordStrength = document.getElementById('passwordStrength');
+        const passwordStrengthText = document.getElementById('passwordStrengthText');
+
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value;
+            let strength = 0;
+            let text = '';
+            let color = '';
+
+            if (password.length >= 6) strength += 25;
+            if (password.length >= 10) strength += 25;
+            if (/[A-Z]/.test(password)) strength += 25;
+            if (/[0-9]/.test(password)) strength += 15;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 10;
+
+            if (strength === 0) {
+                text = 'Enter a password';
+                color = 'var(--gray-500)';
+            } else if (strength < 40) {
+                text = 'Weak';
+                color = 'var(--danger)';
+            } else if (strength < 70) {
+                text = 'Medium';
+                color = 'var(--warning)';
+            } else {
+                text = 'Strong';
+                color = 'var(--success)';
+            }
+
+            passwordStrength.style.width = Math.min(strength, 100) + '%';
+            passwordStrength.style.background = color;
+            passwordStrengthText.textContent = 'Password strength: ' + text;
+            passwordStrengthText.style.color = color;
+        });
+    </script>
+</body>
+
+</html>

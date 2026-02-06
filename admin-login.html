@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin Login - Stress Detection System">
+    <title>Admin Login | Stress Detection</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <style>
+        .admin-login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: var(--dark-bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated Background */
+        .admin-login-page::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(138, 43, 226, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(0, 153, 230, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 40% 40%, rgba(255, 107, 157, 0.1) 0%, transparent 30%);
+            animation: backgroundPulse 15s ease-in-out infinite alternate;
+        }
+
+        @keyframes backgroundPulse {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(-5%, -5%) rotate(5deg);
+            }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--primary-400);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 20s infinite;
+        }
+
+        .particle:nth-child(1) {
+            left: 10%;
+            animation-delay: 0s;
+            animation-duration: 25s;
+        }
+
+        .particle:nth-child(2) {
+            left: 20%;
+            animation-delay: 2s;
+            animation-duration: 20s;
+            background: var(--accent-400);
+        }
+
+        .particle:nth-child(3) {
+            left: 30%;
+            animation-delay: 4s;
+            animation-duration: 28s;
+        }
+
+        .particle:nth-child(4) {
+            left: 40%;
+            animation-delay: 1s;
+            animation-duration: 22s;
+            background: var(--pink-400);
+        }
+
+        .particle:nth-child(5) {
+            left: 50%;
+            animation-delay: 3s;
+            animation-duration: 24s;
+        }
+
+        .particle:nth-child(6) {
+            left: 60%;
+            animation-delay: 5s;
+            animation-duration: 26s;
+            background: var(--accent-400);
+        }
+
+        .particle:nth-child(7) {
+            left: 70%;
+            animation-delay: 2s;
+            animation-duration: 21s;
+        }
+
+        .particle:nth-child(8) {
+            left: 80%;
+            animation-delay: 4s;
+            animation-duration: 23s;
+            background: var(--primary-400);
+        }
+
+        .particle:nth-child(9) {
+            left: 90%;
+            animation-delay: 1s;
+            animation-duration: 27s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.3;
+            }
+
+            50% {
+                transform: translateY(50vh) scale(1);
+                opacity: 0.5;
+            }
+
+            90% {
+                opacity: 0.3;
+            }
+        }
+
+        /* Login Container */
+        .admin-login-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1000px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            box-shadow:
+                0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                0 0 100px rgba(138, 43, 226, 0.1);
+            animation: containerAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes containerAppear {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Left Panel - Branding */
+        .admin-brand-panel {
+            background: linear-gradient(135deg,
+                    rgba(138, 43, 226, 0.3) 0%,
+                    rgba(0, 153, 230, 0.2) 50%,
+                    rgba(138, 43, 226, 0.3) 100%);
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-brand-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .admin-shield-icon {
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, var(--primary-400), var(--accent-400));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+            margin-bottom: 2rem;
+            box-shadow:
+                0 20px 40px rgba(138, 43, 226, 0.4),
+                inset 0 -5px 20px rgba(0, 0, 0, 0.2);
+            animation: shieldFloat 4s ease-in-out infinite;
+            position: relative;
+        }
+
+        .admin-shield-icon::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid var(--primary-400);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: ripple 2s ease-out infinite;
+        }
+
+        @keyframes shieldFloat {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+
+            100% {
+                transform: scale(1.3);
+                opacity: 0;
+            }
+        }
+
+        .admin-brand-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .admin-brand-subtitle {
+            font-size: 1rem;
+            color: var(--dark-text-muted);
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .admin-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+            position: relative;
+        }
+
+        .admin-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            color: var(--dark-text-secondary);
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .admin-features li:last-child {
+            border-bottom: none;
+        }
+
+        .admin-features li i {
+            width: 32px;
+            height: 32px;
+            background: rgba(138, 43, 226, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-400);
+            font-size: 0.9rem;
+        }
+
+        /* Right Panel - Form */
+        .admin-form-panel {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .admin-form-header {
+            margin-bottom: 2rem;
+        }
+
+        .admin-form-header h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-form-header p {
+            color: var(--dark-text-muted);
+            font-size: 0.95rem;
+        }
+
+        .admin-input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .admin-input-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--dark-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .admin-input-wrapper i:first-child {
+            position: absolute;
+            left: 1rem;
+            color: var(--dark-text-muted);
+            font-size: 1rem;
+            z-index: 1;
+        }
+
+        .admin-input-wrapper input {
+            width: 100%;
+            padding: 1rem 3rem 1rem 3rem;
+            background: var(--dark-surface);
+            border: 2px solid transparent;
+            border-radius: var(--radius-lg);
+            color: var(--dark-text);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .admin-input-wrapper input:focus {
+            outline: none;
+            border-color: var(--primary-400);
+            background: var(--dark-bg);
+            box-shadow: 0 0 0 4px rgba(138, 43, 226, 0.1);
+        }
+
+        .admin-input-wrapper input::placeholder {
+            color: var(--dark-text-muted);
+        }
+
+        .admin-input-wrapper .toggle-pass {
+            position: absolute;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--dark-text-muted);
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .admin-input-wrapper .toggle-pass:hover {
+            color: var(--primary-400);
+        }
+
+        .admin-login-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            border: none;
+            border-radius: var(--radius-lg);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(138, 43, 226, 0.3);
+            margin-top: 0.5rem;
+        }
+
+        .admin-login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(138, 43, 226, 0.4);
+        }
+
+        .admin-login-btn:active {
+            transform: translateY(0);
+        }
+
+        .admin-divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--dark-text-muted);
+            font-size: 0.85rem;
+        }
+
+        .admin-divider::before,
+        .admin-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--glass-border);
+        }
+
+        .admin-divider span {
+            padding: 0 1rem;
+        }
+
+        .admin-back-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--dark-text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .admin-back-link:hover {
+            color: var(--primary-400);
+        }
+
+        .admin-credentials-box {
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.1), rgba(0, 153, 230, 0.1));
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .admin-credentials-box h4 {
+            font-size: 0.85rem;
+            color: var(--primary-400);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .admin-credential-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .admin-credential-row:last-child {
+            border-bottom: none;
+        }
+
+        .admin-credential-row span:first-child {
+            color: var(--dark-text-muted);
+        }
+
+        .admin-credential-row code {
+            background: var(--dark-surface);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-md);
+            font-family: monospace;
+            color: var(--accent-400);
+        }
+
+        /* Security Warning */
+        .security-box {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .security-box i {
+            color: var(--danger);
+        }
+
+        .security-box span {
+            font-size: 0.8rem;
+            color: var(--dark-text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-login-container {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+
+            .admin-brand-panel {
+                padding: 2rem;
+            }
+
+            .admin-shield-icon {
+                width: 100px;
+                height: 100px;
+                font-size: 2.5rem;
+            }
+
+            .admin-brand-title {
+                font-size: 1.5rem;
+            }
+
+            .admin-features {
+                display: none;
+            }
+
+            .admin-form-panel {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="admin-login-page">
+        <!-- Floating Particles -->
+        <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+
+        <!-- Login Container -->
+        <div class="admin-login-container">
+            <!-- Left Panel - Branding -->
+            <div class="admin-brand-panel">
+                <div class="admin-shield-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h1 class="admin-brand-title">Admin <span class="text-gradient">Portal</span></h1>
+                <p class="admin-brand-subtitle">Secure access to system administration</p>
+
+                <ul class="admin-features">
+                    <li>
+                        <i class="fas fa-users-cog"></i>
+                        <span>Complete User Management</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-chart-line"></i>
+                        <span>View All Detection Results</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-sliders-h"></i>
+                        <span>System Configuration</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-database"></i>
+                        <span>Data Export & Management</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Security & Access Control</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Right Panel - Form -->
+            <div class="admin-form-panel">
+                <div class="admin-form-header">
+                    <h2>Welcome Back, Admin</h2>
+                    <p>Enter your credentials to access the dashboard</p>
+                </div>
+
+                <form id="adminLoginForm">
+                    <div class="admin-input-group">
+                        <label for="adminId">Admin ID</label>
+                        <div class="admin-input-wrapper">
+                            <i class="fas fa-id-badge"></i>
+                            <input type="text" id="adminId" placeholder="Enter your admin ID" required
+                                autocomplete="username">
+                        </div>
+                    </div>
+
+                    <div class="admin-input-group">
+                        <label for="password">Password</label>
+                        <div class="admin-input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" placeholder="Enter your password" required
+                                autocomplete="current-password">
+                            <button type="button" class="toggle-pass" id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="admin-login-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login to Admin Panel
+                    </button>
+                </form>
+
+                <div class="admin-divider">
+                    <span>Quick Access</span>
+                </div>
+
+                <a href="login.html" class="admin-back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to User Login
+                </a>
+
+                <div class="admin-credentials-box">
+                    <h4><i class="fas fa-key"></i> Default Credentials</h4>
+                    <div class="admin-credential-row">
+                        <span>Admin ID:</span>
+                        <code>admin</code>
+                    </div>
+                    <div class="admin-credential-row">
+                        <span>Password:</span>
+                        <code>admin123</code>
+                    </div>
+                </div>
+
+                <div class="security-box">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Unauthorized access attempts are logged and monitored</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Toggle password visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            togglePassword.querySelector('i').classList.toggle('fa-eye');
+            togglePassword.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+
+        // Admin Login Form Handler
+        document.getElementById('adminLoginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const adminId = document.getElementById('adminId').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Get stored admin credentials
+            const storedAdminId = localStorage.getItem('adminId') || 'admin';
+            const storedAdminPassword = localStorage.getItem('adminPassword') || 'admin123';
+
+            // Validate credentials
+            if (adminId === storedAdminId && password === storedAdminPassword) {
+                // Set admin session
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                sessionStorage.setItem('adminLoginTime', new Date().toISOString());
+
+                // Log successful login
+                const loginLogs = JSON.parse(localStorage.getItem('adminLoginLogs') || '[]');
+                loginLogs.push({
+                    timestamp: new Date().toISOString(),
+                    status: 'success',
+                    ip: 'localhost'
+                });
+                localStorage.setItem('adminLoginLogs', JSON.stringify(loginLogs));
+
+                showToast('Login successful! Redirecting...', 'success');
+
+                setTimeout(() => {
+                    window.location.href = 'admin-dashboard.html';
+                }, 1000);
+            } else {
+                // Log failed attempt
+                const loginLogs = JSON.parse(localStorage.getItem('adminLoginLogs') || '[]');
+                loginLogs.push({
+                    timestamp: new Date().toISOString(),
+                    status: 'failed',
+                    attemptedId: adminId,
+                    ip: 'localhost'
+                });
+                localStorage.setItem('adminLoginLogs', JSON.stringify(loginLogs));
+
+                showToast('Invalid admin ID or password!', 'error');
+
+                // Shake animation on form
+                const form = document.getElementById('adminLoginForm');
+                form.style.animation = 'shake 0.5s ease-in-out';
+                setTimeout(() => form.style.animation = '', 500);
+            }
+        });
+
+        // Shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Check if already logged in
+        if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+            window.location.href = 'admin-dashboard.html';
+        }
+
+        // Toast function (fallback if app.js not loaded)
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease-out reverse forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

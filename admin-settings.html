@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin Settings - Manage admin account and system settings">
+    <title>Admin Settings | Stress Detection in IT Professionals</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <span class="sidebar-brand-icon">🛡️</span>
+                <span class="sidebar-brand-text">Admin<span class="text-gradient">Panel</span></span>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="admin-dashboard.html" class="sidebar-link">
+                    <span class="sidebar-link-icon"><i class="fas fa-tachometer-alt"></i></span>
+                    Dashboard
+                </a>
+
+                <div class="sidebar-section">Management</div>
+
+                <a href="admin-dashboard.html" class="sidebar-link">
+                    <span class="sidebar-link-icon"><i class="fas fa-users"></i></span>
+                    User Management
+                </a>
+                <a href="admin-dashboard.html" class="sidebar-link">
+                    <span class="sidebar-link-icon"><i class="fas fa-chart-bar"></i></span>
+                    All Results
+                </a>
+                <a href="admin-dashboard.html" class="sidebar-link">
+                    <span class="sidebar-link-icon"><i class="fas fa-database"></i></span>
+                    Dataset View
+                </a>
+
+                <div class="sidebar-section">System</div>
+
+                <a href="admin-settings.html" class="sidebar-link active">
+                    <span class="sidebar-link-icon"><i class="fas fa-cog"></i></span>
+                    Settings
+                </a>
+                <a href="index.html" class="sidebar-link" id="logoutBtn">
+                    <span class="sidebar-link-icon"><i class="fas fa-sign-out-alt"></i></span>
+                    Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div>
+                    <h1 class="dashboard-title">Admin <span class="text-gradient">Settings</span></h1>
+                    <p class="text-muted" style="margin-bottom: 0;">Manage system settings and admin account security
+                    </p>
+                </div>
+
+                <div class="dashboard-user">
+                    <div class="user-avatar" style="background: var(--gradient-accent);">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <!-- Admin Password -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-lock" style="color: var(--primary-400); margin-right: 0.5rem;"></i>
+                            Change Admin Password
+                        </h3>
+                    </div>
+
+                    <div class="alert alert-info mb-6">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Default admin password is: <strong>admin123</strong></span>
+                    </div>
+
+                    <form id="adminPasswordForm">
+                        <div class="form-group">
+                            <label class="form-label required" for="currentPassword">Current Password</label>
+                            <div class="input-group">
+                                <input type="password" id="currentPassword" class="form-input"
+                                    placeholder="Enter current password" required>
+                                <span class="input-group-addon toggle-password" data-target="currentPassword">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                            <span class="form-error d-none" id="currentPasswordError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required" for="newPassword">New Password</label>
+                            <div class="input-group">
+                                <input type="password" id="newPassword" class="form-input"
+                                    placeholder="Enter new password" required>
+                                <span class="input-group-addon toggle-password" data-target="newPassword">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                            <span class="form-hint">Must be at least 6 characters</span>
+                            <span class="form-error d-none" id="newPasswordError"></span>
+
+                            <!-- Password Strength -->
+                            <div class="mt-4">
+                                <div class="progress">
+                                    <div class="progress-bar" id="passwordStrength" style="width: 0%;"></div>
+                                </div>
+                                <span class="form-hint" id="passwordStrengthText">Password strength: Enter a
+                                    password</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required" for="confirmPassword">Confirm New Password</label>
+                            <div class="input-group">
+                                <input type="password" id="confirmPassword" class="form-input"
+                                    placeholder="Confirm new password" required>
+                                <span class="input-group-addon toggle-password" data-target="confirmPassword">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                            <span class="form-error d-none" id="confirmPasswordError"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-key"></i>
+                            Update Admin Password
+                        </button>
+                    </form>
+                </div>
+
+                <!-- System Settings -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-sliders-h" style="color: var(--accent-400); margin-right: 0.5rem;"></i>
+                            System Settings
+                        </h3>
+                    </div>
+
+                    <form id="systemSettingsForm">
+                        <div class="form-group">
+                            <label class="form-label">Auto-Activate New Users</label>
+                            <label class="form-checkbox">
+                                <input type="checkbox" id="autoActivate">
+                                <span>Automatically activate new user registrations</span>
+                            </label>
+                            <span class="form-hint">When enabled, users can login immediately after registration</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Maximum File Size (MB)</label>
+                            <input type="number" id="maxFileSize" class="form-input" value="5" min="1" max="20">
+                            <span class="form-hint">Maximum allowed image file size for uploads</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Detection Confidence Threshold (%)</label>
+                            <input type="number" id="confidenceThreshold" class="form-input" value="60" min="50"
+                                max="95">
+                            <span class="form-hint">Minimum confidence level for valid detections</span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Save Settings
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Data Management -->
+            <div class="card mt-8">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-database" style="color: var(--warning); margin-right: 0.5rem;"></i>
+                        Data Management
+                    </h3>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                    <div class="card" style="padding: 1.5rem; text-align: center; background: var(--dark-surface);">
+                        <i class="fas fa-users"
+                            style="font-size: 2rem; color: var(--primary-400); margin-bottom: 1rem;"></i>
+                        <h4 style="margin-bottom: 0.5rem;" id="totalUsersCount">0</h4>
+                        <p style="margin: 0; color: var(--dark-text-muted); font-size: 0.9rem;">Total Users</p>
+                        <button class="btn btn-danger btn-sm mt-4" id="clearUsersBtn">
+                            <i class="fas fa-trash"></i>
+                            Clear All Users
+                        </button>
+                    </div>
+
+                    <div class="card" style="padding: 1.5rem; text-align: center; background: var(--dark-surface);">
+                        <i class="fas fa-chart-bar"
+                            style="font-size: 2rem; color: var(--accent-400); margin-bottom: 1rem;"></i>
+                        <h4 style="margin-bottom: 0.5rem;" id="totalResultsCount">0</h4>
+                        <p style="margin: 0; color: var(--dark-text-muted); font-size: 0.9rem;">Total Results</p>
+                        <button class="btn btn-danger btn-sm mt-4" id="clearResultsBtn">
+                            <i class="fas fa-trash"></i>
+                            Clear All Results
+                        </button>
+                    </div>
+
+                    <div class="card" style="padding: 1.5rem; text-align: center; background: var(--dark-surface);">
+                        <i class="fas fa-download"
+                            style="font-size: 2rem; color: var(--success); margin-bottom: 1rem;"></i>
+                        <h4 style="margin-bottom: 0.5rem;">Export</h4>
+                        <p style="margin: 0; color: var(--dark-text-muted); font-size: 0.9rem;">Download Data</p>
+                        <button class="btn btn-success btn-sm mt-4" id="exportDataBtn">
+                            <i class="fas fa-file-download"></i>
+                            Export All Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reset User Passwords -->
+            <div class="card mt-8">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-key" style="color: var(--danger); margin-right: 0.5rem;"></i>
+                        Reset User Password
+                    </h3>
+                </div>
+
+                <p style="color: var(--dark-text-muted); margin-bottom: 1.5rem;">
+                    Reset a user's password if they forgot their credentials. The new password will be sent to them.
+                </p>
+
+                <form id="resetUserPasswordForm" class="d-flex gap-4 align-center" style="flex-wrap: wrap;">
+                    <div class="form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+                        <select id="userSelect" class="form-input">
+                            <option value="">Select a user...</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+                        <input type="password" id="resetNewPassword" class="form-input"
+                            placeholder="New password (min 6 chars)">
+                    </div>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-key"></i>
+                        Reset Password
+                    </button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Confirm Action</h3>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <p id="modalMessage">Are you sure you want to perform this action?</p>
+            <div class="d-flex gap-4 justify-center mt-6">
+                <button class="btn btn-secondary" id="modalCancel">Cancel</button>
+                <button class="btn btn-danger" id="modalConfirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize admin settings
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCounts();
+            loadUsers();
+            loadSystemSettings();
+        });
+
+        // Load counts
+        function loadCounts() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+
+            document.getElementById('totalUsersCount').textContent = users.length;
+            document.getElementById('totalResultsCount').textContent = results.length;
+        }
+
+        // Load users for dropdown
+        function loadUsers() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const select = document.getElementById('userSelect');
+
+            select.innerHTML = '<option value="">Select a user...</option>';
+            users.forEach(user => {
+                select.innerHTML += `<option value="${user.email}">${user.name} (${user.email})</option>`;
+            });
+        }
+
+        // Load system settings
+        function loadSystemSettings() {
+            const settings = JSON.parse(localStorage.getItem('adminSettings') || '{}');
+
+            document.getElementById('autoActivate').checked = settings.autoActivate || false;
+            document.getElementById('maxFileSize').value = settings.maxFileSize || 5;
+            document.getElementById('confidenceThreshold').value = settings.confidenceThreshold || 60;
+        }
+
+        // Admin password form
+        document.getElementById('adminPasswordForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const adminPassword = localStorage.getItem('adminPassword') || 'admin123';
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Clear errors
+            document.querySelectorAll('.form-error').forEach(el => el.classList.add('d-none'));
+
+            // Validate current password
+            if (currentPassword !== adminPassword) {
+                document.getElementById('currentPasswordError').textContent = 'Current password is incorrect';
+                document.getElementById('currentPasswordError').classList.remove('d-none');
+                return;
+            }
+
+            // Validate new password
+            if (newPassword.length < 6) {
+                document.getElementById('newPasswordError').textContent = 'Password must be at least 6 characters';
+                document.getElementById('newPasswordError').classList.remove('d-none');
+                return;
+            }
+
+            // Validate confirm password
+            if (newPassword !== confirmPassword) {
+                document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
+                document.getElementById('confirmPasswordError').classList.remove('d-none');
+                return;
+            }
+
+            // Save new password
+            localStorage.setItem('adminPassword', newPassword);
+
+            // Clear form
+            document.getElementById('adminPasswordForm').reset();
+            document.getElementById('passwordStrength').style.width = '0%';
+            document.getElementById('passwordStrengthText').textContent = 'Password strength: Enter a password';
+
+            showToast('Admin password updated successfully!', 'success');
+        });
+
+        // Password strength indicator
+        document.getElementById('newPassword').addEventListener('input', (e) => {
+            const password = e.target.value;
+            let strength = 0;
+            let text = '';
+            let color = '';
+
+            if (password.length >= 6) strength += 25;
+            if (password.length >= 10) strength += 25;
+            if (/[A-Z]/.test(password)) strength += 25;
+            if (/[0-9]/.test(password)) strength += 15;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 10;
+
+            if (strength === 0) {
+                text = 'Enter a password';
+                color = 'var(--gray-500)';
+            } else if (strength < 40) {
+                text = 'Weak';
+                color = 'var(--danger)';
+            } else if (strength < 70) {
+                text = 'Medium';
+                color = 'var(--warning)';
+            } else {
+                text = 'Strong';
+                color = 'var(--success)';
+            }
+
+            document.getElementById('passwordStrength').style.width = Math.min(strength, 100) + '%';
+            document.getElementById('passwordStrength').style.background = color;
+            document.getElementById('passwordStrengthText').textContent = 'Password strength: ' + text;
+            document.getElementById('passwordStrengthText').style.color = color;
+        });
+
+        // Password visibility toggles
+        document.querySelectorAll('.toggle-password').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const targetId = toggle.dataset.target;
+                const input = document.getElementById(targetId);
+                const icon = toggle.querySelector('i');
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.className = 'fas fa-eye-slash';
+                } else {
+                    input.type = 'password';
+                    icon.className = 'fas fa-eye';
+                }
+            });
+        });
+
+        // System settings form
+        document.getElementById('systemSettingsForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const settings = {
+                autoActivate: document.getElementById('autoActivate').checked,
+                maxFileSize: parseInt(document.getElementById('maxFileSize').value),
+                confidenceThreshold: parseInt(document.getElementById('confidenceThreshold').value)
+            };
+
+            localStorage.setItem('adminSettings', JSON.stringify(settings));
+            showToast('System settings saved successfully!', 'success');
+        });
+
+        // Reset user password form
+        document.getElementById('resetUserPasswordForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const userEmail = document.getElementById('userSelect').value;
+            const newPassword = document.getElementById('resetNewPassword').value;
+
+            if (!userEmail) {
+                showToast('Please select a user', 'error');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showToast('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userIndex = users.findIndex(u => u.email === userEmail);
+
+            if (userIndex !== -1) {
+                users[userIndex].password = newPassword;
+                localStorage.setItem('users', JSON.stringify(users));
+
+                document.getElementById('resetUserPasswordForm').reset();
+                showToast(`Password reset for ${users[userIndex].name}!`, 'success');
+            }
+        });
+
+        // Modal handling
+        let modalAction = null;
+        const confirmModal = document.getElementById('confirmModal');
+
+        function showConfirmModal(title, message, action) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            modalAction = action;
+            confirmModal.classList.add('active');
+        }
+
+        document.getElementById('closeModal').addEventListener('click', () => {
+            confirmModal.classList.remove('active');
+        });
+
+        document.getElementById('modalCancel').addEventListener('click', () => {
+            confirmModal.classList.remove('active');
+        });
+
+        document.getElementById('modalConfirm').addEventListener('click', () => {
+            if (modalAction) modalAction();
+            confirmModal.classList.remove('active');
+        });
+
+        // Clear users
+        document.getElementById('clearUsersBtn').addEventListener('click', () => {
+            showConfirmModal(
+                'Clear All Users',
+                'Are you sure you want to delete all users? This action cannot be undone.',
+                () => {
+                    localStorage.removeItem('users');
+                    loadCounts();
+                    loadUsers();
+                    showToast('All users cleared!', 'success');
+                }
+            );
+        });
+
+        // Clear results
+        document.getElementById('clearResultsBtn').addEventListener('click', () => {
+            showConfirmModal(
+                'Clear All Results',
+                'Are you sure you want to delete all detection results? This action cannot be undone.',
+                () => {
+                    localStorage.removeItem('stressResults');
+                    loadCounts();
+                    showToast('All results cleared!', 'success');
+                }
+            );
+        });
+
+        // Export data
+        document.getElementById('exportDataBtn').addEventListener('click', () => {
+            const data = {
+                users: JSON.parse(localStorage.getItem('users') || '[]'),
+                results: JSON.parse(localStorage.getItem('stressResults') || '[]'),
+                settings: JSON.parse(localStorage.getItem('adminSettings') || '{}'),
+                exportedAt: new Date().toISOString()
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `stress-detection-export-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            showToast('Data exported successfully!', 'success');
+        });
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+        <span>${message}</span>
+      `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease-out reverse forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Check admin authentication on page load
+        (function checkAdminAuth() {
+            const isAdminLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
+            if (!isAdminLoggedIn) {
+                // Redirect to admin login if not authenticated
+                window.location.href = 'admin-login.html';
+                return;
+            }
+        })();
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // Clear admin session
+            sessionStorage.removeItem('adminLoggedIn');
+            sessionStorage.removeItem('adminLoginTime');
+
+            showToast('Logged out successfully!', 'success');
+            setTimeout(() => {
+                window.location.href = 'admin-login.html';
+            }, 1000);
+        });
+    </script>
+</body>
+
+</html>

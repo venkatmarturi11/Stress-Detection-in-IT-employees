@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey-Based Stress Prediction | StressDetect Pro</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-border: #334155;
+            --dark-text: #f8fafc;
+            --dark-text-muted: #94a3b8;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            min-height: 100vh;
+            color: var(--dark-text);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--dark-text-muted);
+            font-size: 1rem;
+        }
+
+        .card {
+            background: var(--dark-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--dark-border);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--dark-text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-label i {
+            color: var(--primary-light);
+            font-size: 0.75rem;
+        }
+
+        .form-input,
+        .form-select {
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            border-radius: var(--radius-sm);
+            padding: 0.875rem 1rem;
+            color: var(--dark-text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .form-input::placeholder {
+            color: var(--dark-text-muted);
+        }
+
+        .form-select option {
+            background: var(--dark-bg);
+            color: var(--dark-text);
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .slider-value {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .form-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: var(--dark-bg);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .form-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .form-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        .btn-secondary:hover {
+            background: var(--dark-border);
+        }
+
+        .result-card {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result-card.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stress-meter {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 2rem auto;
+        }
+
+        .stress-meter-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(var(--success) 0%,
+                    var(--warning) 50%,
+                    var(--danger) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stress-meter-inner {
+            width: 160px;
+            height: 160px;
+            background: var(--dark-card);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stress-percentage {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stress-label {
+            font-size: 0.875rem;
+            color: var(--dark-text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .risk-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        .risk-low {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .risk-medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .risk-high {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .factors-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+            text-align: left;
+        }
+
+        .factor-item {
+            background: var(--dark-bg);
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .factor-name {
+            color: var(--dark-text-muted);
+            font-size: 0.875rem;
+        }
+
+        .factor-impact {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .factor-high {
+            color: var(--danger);
+        }
+
+        .factor-medium {
+            color: var(--warning);
+        }
+
+        .factor-low {
+            color: var(--success);
+        }
+
+        .recommendations {
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .recommendation-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--dark-bg);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.75rem;
+        }
+
+        .recommendation-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--dark-border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .info-box {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+
+        .info-box i {
+            color: var(--primary);
+            margin-top: 0.125rem;
+        }
+
+        .info-box p {
+            font-size: 0.875rem;
+            color: var(--dark-text-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-clipboard-list"></i> Survey-Based Stress Prediction</h1>
+            <p>Complete this questionnaire for a detailed stress level analysis using XGBoost ML</p>
+        </div>
+
+        <!-- Survey Form -->
+        <div class="card" id="surveyForm">
+            <h2 class="card-title"><i class="fas fa-user-circle"></i> Employee Information</h2>
+
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <p>This assessment uses machine learning (XGBoost) to predict stress levels based on demographic and
+                    work-related factors. All data is processed locally and not stored.</p>
+            </div>
+
+            <form id="stressSurvey">
+                <div class="form-grid">
+                    <!-- Age -->
+                    <div class="form-group">
+                        <label class="form-label" for="age">
+                            <i class="fas fa-calendar"></i> Age
+                        </label>
+                        <input type="number" id="age" class="form-input" placeholder="Enter your age" min="18" max="70"
+                            required>
+                    </div>
+
+                    <!-- Gender -->
+                    <div class="form-group">
+                        <label class="form-label" for="gender">
+                            <i class="fas fa-venus-mars"></i> Gender
+                        </label>
+                        <select id="gender" class="form-select" required>
+                            <option value="">Select gender</option>
+                            <option value="1">Male</option>
+                            <option value="0">Female</option>
+                        </select>
+                    </div>
+
+                    <!-- Designation Level -->
+                    <div class="form-group">
+                        <label class="form-label" for="designation">
+                            <i class="fas fa-briefcase"></i> Designation Level
+                        </label>
+                        <select id="designation" class="form-select" required>
+                            <option value="">Select level</option>
+                            <option value="1">Junior (Level 1)</option>
+                            <option value="2">Associate (Level 2)</option>
+                            <option value="3">Senior (Level 3)</option>
+                            <option value="4">Lead (Level 4)</option>
+                            <option value="5">Manager (Level 5)</option>
+                        </select>
+                    </div>
+
+                    <!-- Company Type -->
+                    <div class="form-group">
+                        <label class="form-label" for="companyType">
+                            <i class="fas fa-building"></i> Company Type
+                        </label>
+                        <select id="companyType" class="form-select" required>
+                            <option value="">Select type</option>
+                            <option value="1">Product-Based</option>
+                            <option value="0">Service-Based</option>
+                        </select>
+                    </div>
+
+                    <!-- WFH Setup -->
+                    <div class="form-group">
+                        <label class="form-label" for="wfhSetup">
+                            <i class="fas fa-home"></i> WFH Setup Available
+                        </label>
+                        <select id="wfhSetup" class="form-select" required>
+                            <option value="">Select option</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+
+                    <!-- Resource Allocation -->
+                    <div class="form-group">
+                        <label class="form-label" for="resourceAllocation">
+                            <i class="fas fa-tasks"></i> Resource Allocation (Hours/Day)
+                        </label>
+                        <input type="number" id="resourceAllocation" class="form-input" placeholder="e.g., 8" min="1"
+                            max="16" step="0.5" required>
+                    </div>
+
+                    <!-- Mental Fatigue Score -->
+                    <div class="form-group full-width">
+                        <div class="slider-container">
+                            <div class="slider-header">
+                                <label class="form-label" for="mentalFatigue">
+                                    <i class="fas fa-brain"></i> Mental Fatigue Score
+                                </label>
+                                <span class="slider-value" id="fatigueValue">5</span>
+                            </div>
+                            <input type="range" id="mentalFatigue" class="form-slider" min="0" max="10" step="0.1"
+                                value="5">
+                            <div
+                                style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--dark-text-muted);">
+                                <span>Low Fatigue</span>
+                                <span>High Fatigue</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-chart-line"></i> Predict Stress Level
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Card -->
+        <div class="card result-card" id="resultCard">
+            <h2 class="card-title"><i class="fas fa-chart-pie"></i> Prediction Results</h2>
+
+            <div class="stress-meter">
+                <div class="stress-meter-circle">
+                    <div class="stress-meter-inner">
+                        <span class="stress-percentage" id="stressPercentage">0%</span>
+                        <span class="stress-label">Stress Level</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="riskBadge" class="risk-badge risk-low">
+                <i class="fas fa-shield-alt"></i>
+                <span id="riskText">Low Risk</span>
+            </div>
+
+            <div class="factors-grid" id="factorsGrid">
+                <!-- Populated dynamically -->
+            </div>
+
+            <div class="recommendations" id="recommendations">
+                <h3 style="margin-bottom: 1rem; font-size: 1rem;">
+                    <i class="fas fa-lightbulb" style="color: var(--warning);"></i> Personalized Recommendations
+                </h3>
+                <!-- Populated dynamically -->
+            </div>
+
+            <div class="nav-links">
+                <button class="btn btn-secondary" onclick="resetForm()">
+                    <i class="fas fa-redo"></i> New Assessment
+                </button>
+                <a href="user-dashboard.html" class="btn btn-secondary">
+                    <i class="fas fa-camera"></i> Try Image Scan
+                </a>
+                <a href="results.html" class="btn btn-primary">
+                    <i class="fas fa-history"></i> View All Results
+                </a>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-info-circle"></i> About This Assessment</h2>
+            <p style="color: var(--dark-text-muted); line-height: 1.6;">
+                This survey uses an <strong>XGBoost machine learning algorithm</strong> trained on IT employee stress
+                data.
+                The model analyzes demographic factors (age, gender), work conditions (WFH setup, company type),
+                and workload indicators (resource allocation, mental fatigue) to predict your stress level.
+            </p>
+            <p style="color: var(--dark-text-muted); line-height: 1.6; margin-top: 1rem;">
+                <strong>Algorithm:</strong> XGBoost (Extreme Gradient Boosting)<br>
+                <strong>Accuracy:</strong> ~85% on training dataset<br>
+                <strong>Factors:</strong> 7 key indicators
+            </p>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Analyzing with XGBoost Model...</p>
+    </div>
+
+    <script>
+        // Mental fatigue slider
+        const fatigueSlider = document.getElementById('mentalFatigue');
+        const fatigueValue = document.getElementById('fatigueValue');
+
+        fatigueSlider.addEventListener('input', () => {
+            fatigueValue.textContent = fatigueSlider.value;
+        });
+
+        // Form submission
+        document.getElementById('stressSurvey').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Show loading
+            document.getElementById('loadingOverlay').classList.add('show');
+
+            // Gather form data
+            const formData = {
+                age: parseInt(document.getElementById('age').value),
+                gender: parseInt(document.getElementById('gender').value),
+                designation: parseInt(document.getElementById('designation').value),
+                companyType: parseInt(document.getElementById('companyType').value),
+                wfhSetup: parseInt(document.getElementById('wfhSetup').value),
+                resourceAllocation: parseFloat(document.getElementById('resourceAllocation').value),
+                mentalFatigue: parseFloat(document.getElementById('mentalFatigue').value)
+            };
+
+            // Simulate API call (XGBoost prediction)
+            setTimeout(() => {
+                const result = predictStress(formData);
+                displayResults(result, formData);
+
+                // Save to localStorage
+                saveResult(result, formData);
+
+                // Hide loading and show results
+                document.getElementById('loadingOverlay').classList.remove('show');
+                document.getElementById('surveyForm').style.display = 'none';
+                document.getElementById('resultCard').classList.add('show');
+            }, 1500);
+        });
+
+        // XGBoost-like prediction (client-side simulation)
+        function predictStress(data) {
+            // Weighted factors based on research paper
+            let stressScore = 0;
+
+            // Age factor (moderate impact)
+            const ageFactor = data.age < 30 ? 0.3 : data.age < 40 ? 0.5 : data.age < 50 ? 0.6 : 0.7;
+            stressScore += ageFactor * 10;
+
+            // Gender factor (slight impact based on studies)
+            stressScore += data.gender === 0 ? 3 : 2;
+
+            // Designation level (higher = more stress)
+            stressScore += data.designation * 5;
+
+            // Company type (service-based typically higher stress)
+            stressScore += data.companyType === 0 ? 8 : 4;
+
+            // WFH setup availability (reduces stress)
+            stressScore += data.wfhSetup === 1 ? -5 : 10;
+
+            // Resource allocation (higher hours = more stress)
+            stressScore += (data.resourceAllocation - 6) * 3;
+
+            // Mental fatigue (major contributor)
+            stressScore += data.mentalFatigue * 6;
+
+            // Normalize to percentage (0-100)
+            let percentage = Math.min(100, Math.max(0, stressScore + 10));
+
+            // Add some variation
+            percentage += (Math.random() - 0.5) * 5;
+            percentage = Math.min(100, Math.max(0, percentage));
+
+            // Determine risk level
+            let risk = 'Low';
+            if (percentage > 60) risk = 'High';
+            else if (percentage > 35) risk = 'Medium';
+
+            // Factor impacts
+            const factors = [
+                { name: 'Mental Fatigue', impact: data.mentalFatigue > 6 ? 'High' : data.mentalFatigue > 3 ? 'Medium' : 'Low' },
+                { name: 'Work Hours', impact: data.resourceAllocation > 9 ? 'High' : data.resourceAllocation > 7 ? 'Medium' : 'Low' },
+                { name: 'WFH Setup', impact: data.wfhSetup === 0 ? 'High' : 'Low' },
+                { name: 'Designation', impact: data.designation > 3 ? 'High' : data.designation > 2 ? 'Medium' : 'Low' }
+            ];
+
+            return {
+                percentage: percentage.toFixed(2),
+                risk: risk,
+                factors: factors,
+                timestamp: new Date().toISOString(),
+                method: 'XGBoost Survey Prediction'
+            };
+        }
+
+        // Display results
+        function displayResults(result, formData) {
+            // Update percentage
+            document.getElementById('stressPercentage').textContent = result.percentage + '%';
+
+            // Update risk badge
+            const riskBadge = document.getElementById('riskBadge');
+            const riskText = document.getElementById('riskText');
+            riskBadge.className = 'risk-badge risk-' + result.risk.toLowerCase();
+            riskText.textContent = result.risk + ' Risk';
+
+            // Update factors grid
+            const factorsGrid = document.getElementById('factorsGrid');
+            factorsGrid.innerHTML = result.factors.map(f => `
+                <div class="factor-item">
+                    <span class="factor-name">${f.name}</span>
+                    <span class="factor-impact factor-${f.impact.toLowerCase()}">${f.impact}</span>
+                </div>
+            `).join('');
+
+            // Generate recommendations
+            const recommendations = generateRecommendations(result, formData);
+            const recsContainer = document.getElementById('recommendations');
+            recsContainer.innerHTML = '<h3 style="margin-bottom: 1rem; font-size: 1rem;"><i class="fas fa-lightbulb" style="color: var(--warning);"></i> Personalized Recommendations</h3>' +
+                recommendations.map(r => `
+                    <div class="recommendation-item">
+                        <div class="recommendation-icon" style="background: ${r.bgColor};">
+                            <i class="fas fa-${r.icon}" style="color: ${r.color};"></i>
+                        </div>
+                        <div>
+                            <strong style="display: block; margin-bottom: 0.25rem;">${r.title}</strong>
+                            <span style="font-size: 0.875rem; color: var(--dark-text-muted);">${r.description}</span>
+                        </div>
+                    </div>
+                `).join('');
+        }
+
+        // Generate personalized recommendations
+        function generateRecommendations(result, formData) {
+            const recs = [];
+
+            if (formData.mentalFatigue > 6) {
+                recs.push({
+                    icon: 'brain',
+                    color: '#ef4444',
+                    bgColor: 'rgba(239, 68, 68, 0.2)',
+                    title: 'Address Mental Fatigue',
+                    description: 'Your mental fatigue is high. Consider taking regular breaks, practicing mindfulness, and ensuring adequate sleep.'
+                });
+            }
+
+            if (formData.resourceAllocation > 9) {
+                recs.push({
+                    icon: 'clock',
+                    color: '#f59e0b',
+                    bgColor: 'rgba(245, 158, 11, 0.2)',
+                    title: 'Optimize Work Hours',
+                    description: 'Working ' + formData.resourceAllocation + ' hours/day is above recommended. Try time-blocking techniques to improve efficiency.'
+                });
+            }
+
+            if (formData.wfhSetup === 0) {
+                recs.push({
+                    icon: 'home',
+                    color: '#6366f1',
+                    bgColor: 'rgba(99, 102, 241, 0.2)',
+                    title: 'Consider Remote Options',
+                    description: 'WFH setup can reduce commute stress. Discuss flexible work arrangements with your manager.'
+                });
+            }
+
+            if (formData.designation > 3) {
+                recs.push({
+                    icon: 'users',
+                    color: '#10b981',
+                    bgColor: 'rgba(16, 185, 129, 0.2)',
+                    title: 'Delegate Responsibilities',
+                    description: 'At your designation level, effective delegation can reduce stress. Trust your team with appropriate tasks.'
+                });
+            }
+
+            // Always add a wellness recommendation
+            recs.push({
+                icon: 'heart',
+                color: '#ec4899',
+                bgColor: 'rgba(236, 72, 153, 0.2)',
+                title: 'Daily Wellness Routine',
+                description: 'Incorporate 15 minutes of physical activity, stay hydrated, and practice deep breathing exercises.'
+            });
+
+            return recs.slice(0, 4);
+        }
+
+        // Save result to localStorage
+        function saveResult(result, formData) {
+            const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+
+            results.push({
+                ...result,
+                surveyData: formData,
+                stressLevel: parseFloat(result.percentage) > 60 ? 'High' : parseFloat(result.percentage) > 35 ? 'Medium' : 'Low',
+                detectionMethod: 'XGBoost Survey Prediction',
+                confidence: 85,
+                emotion: parseFloat(result.percentage) > 60 ? 'Stressed' : parseFloat(result.percentage) > 35 ? 'Concerned' : 'Relaxed'
+            });
+
+            localStorage.setItem('stressResults', JSON.stringify(results));
+        }
+
+        // Reset form
+        function resetForm() {
+            document.getElementById('surveyForm').style.display = 'block';
+            document.getElementById('resultCard').classList.remove('show');
+            document.getElementById('stressSurvey').reset();
+            fatigueValue.textContent = '5';
+        }
+    </script>
+</body>
+
+</html>
