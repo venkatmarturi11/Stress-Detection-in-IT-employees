@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Login to Stress Detection System - Access your stress analysis dashboard">
-    <title>Login | Stress Detection in IT Professionals</title>
+    <title>Login | StressDetect AI</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
     <!-- Font Awesome -->
@@ -18,37 +19,64 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/animations.css">
 </head>
 
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
-            <a href="index.html" class="nav-brand">
-                <span class="nav-brand-icon">🧠</span>
-                <span>StressDetect<span class="text-gradient">AI</span></span>
-            </a>
-
-            <div class="nav-actions">
-                <a href="register.html" class="btn btn-secondary">Register</a>
-                <a href="index.html" class="btn btn-primary">
-                    <i class="fas fa-home"></i>
-                    Home
-                </a>
+    <div class="auth-split">
+        <!-- Left Brand Panel -->
+        <div class="auth-brand-panel">
+            <div class="auth-brand-content">
+                <div class="auth-brand-logo">🧠</div>
+                <h1 class="auth-brand-title">
+                    Welcome to<br>StressDetect<span
+                        style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">AI</span>
+                </h1>
+                <p class="auth-brand-desc">
+                    AI-powered stress detection platform for IT professionals. Monitor your well-being with cutting-edge
+                    facial analysis.
+                </p>
+                <div class="auth-brand-features">
+                    <div class="auth-brand-feature">
+                        <i class="fas fa-check"></i>
+                        <span>89% Detection Accuracy</span>
+                    </div>
+                    <div class="auth-brand-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Real-time Facial Analysis</span>
+                    </div>
+                    <div class="auth-brand-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Personalized Recommendations</span>
+                    </div>
+                    <div class="auth-brand-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Secure & Private</span>
+                    </div>
+                </div>
             </div>
         </div>
-    </nav>
 
-    <!-- Login Page -->
-    <main class="auth-page">
-        <div class="auth-container animate-slideUp">
-            <div class="auth-card card">
-                <div class="auth-header">
-                    <div class="auth-logo">
-                        <i class="fas fa-sign-in-alt"></i>
-                    </div>
-                    <h1 class="auth-title">Welcome Back</h1>
-                    <p class="auth-subtitle">Sign in to access your stress detection dashboard</p>
+        <!-- Right Form Panel -->
+        <div class="auth-form-panel">
+            <div class="auth-form-wrapper">
+                <!-- Top Nav -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+                    <a href="index.html"
+                        style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.9rem; text-decoration: none; transition: color 0.3s;">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </a>
+                    <a href="register.html" class="btn btn-secondary btn-sm">
+                        Create Account
+                    </a>
+                </div>
+
+                <!-- Auth Header -->
+                <div style="margin-bottom: 2rem;">
+                    <h1 style="font-size: var(--text-3xl); font-weight: 800; margin-bottom: 0.5rem;">Welcome Back 👋
+                    </h1>
+                    <p style="color: var(--text-muted); margin-bottom: 0;">Sign in to access your stress detection
+                        dashboard</p>
                 </div>
 
                 <!-- Alert Message (hidden by default) -->
@@ -90,7 +118,7 @@
                         <a href="#" style="font-size: 0.9rem; color: var(--primary-400);">Forgot Password?</a>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-full btn-lg" id="submitBtn">
+                    <button type="submit" class="btn btn-primary w-full btn-lg btn-shimmer" id="submitBtn">
                         <i class="fas fa-sign-in-alt"></i>
                         Sign In
                     </button>
@@ -106,34 +134,36 @@
                 <div class="auth-footer" style="margin-top: 1.5rem;">
                     Don't have an account? <a href="register.html">Create one</a>
                 </div>
-            </div>
 
-            <!-- Demo Credentials Card -->
-            <div class="card mt-6" style="padding: 1.5rem;">
-                <h4 style="font-size: 1rem; margin-bottom: 1rem; text-align: center;">
-                    <i class="fas fa-key" style="color: var(--accent-400);"></i>
-                    Demo Credentials
-                </h4>
-                <div style="display: grid; gap: 0.75rem; font-size: 0.9rem;">
-                    <div
-                        style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--glass-bg); border-radius: var(--radius-md);">
-                        <span style="color: var(--dark-text-muted);">User Email:</span>
-                        <span style="font-family: monospace;">demo@example.com</span>
-                    </div>
-                    <div
-                        style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--glass-bg); border-radius: var(--radius-md);">
-                        <span style="color: var(--dark-text-muted);">Password:</span>
-                        <span style="font-family: monospace;">demo123</span>
+                <!-- Demo Credentials Card -->
+                <div class="card mt-6" style="padding: 1.25rem; border: 1px dashed var(--glass-border);">
+                    <h4
+                        style="font-size: 0.9rem; margin-bottom: 0.75rem; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <i class="fas fa-key" style="color: var(--warning);"></i>
+                        Demo Credentials
+                    </h4>
+                    <div style="display: grid; gap: 0.5rem; font-size: 0.85rem;">
+                        <div
+                            style="display: flex; justify-content: space-between; padding: 0.5rem 0.75rem; background: var(--glass-bg); border-radius: var(--radius-md);">
+                            <span style="color: var(--text-muted);">Email:</span>
+                            <span style="font-family: var(--font-mono); font-size: 0.8rem;">demo@example.com</span>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; padding: 0.5rem 0.75rem; background: var(--glass-bg); border-radius: var(--radius-md);">
+                            <span style="color: var(--text-muted);">Password:</span>
+                            <span style="font-family: var(--font-mono); font-size: 0.8rem;">demo123</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- Scripts -->
+    <script src="js/animations.js"></script>
     <script src="js/auth.js"></script>
     <script>
         // Password visibility toggle

@@ -36,7 +36,7 @@ echo.
 echo Frontend:     http://localhost:%FRONTEND_PORT%
 echo Backend API:  http://localhost:%BACKEND_PORT%/api/health/
 echo.
-echo Press any key to open the application in your browser...
-pause >nul
+echo Opening application in browser...
+timeout /t 2 /nobreak >nul
 
-start http://localhost:%FRONTEND_PORT%
+start "" "http://localhost:%FRONTEND_PORT%"

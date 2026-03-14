@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://stress-detection-in-it-employees.netlify.app/sitemap.xml
