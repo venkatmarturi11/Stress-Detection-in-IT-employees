@@ -1,13 +1,11 @@
-/**
- * Stress Detection in IT Professionals
- * Authentication JavaScript
- */
+// API Configuration
+const API_BASE_URL = 'http://localhost:8000'; // Update this if your backend runs elsewhere
 
 // ===== Registration Form Handler =====
 const registerForm = document.getElementById('registerForm');
 
 if (registerForm) {
-    registerForm.addEventListener('submit', (e) => {
+    registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         // Get form values
@@ -56,39 +54,47 @@ if (registerForm) {
 
         if (!isValid) return;
 
-        // Check if email already exists
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
-        if (users.some(u => u.email === email)) {
-            showError('emailError', 'This email is already registered');
-            showAlert('This email is already registered. Please use a different email or login.', 'warning');
-            return;
+        try {
+            // Show loading state
+            const submitBtn = registerForm.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
+
+            const response = await fetch(`${API_BASE_URL}/api/register/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: fullName,
+                    email: email,
+                    mobile: mobile,
+                    password: password
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showAlert('Registration successful! Redirecting to login...', 'success');
+                registerForm.reset();
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            } else {
+                showError('emailError', result.error || 'Registration failed');
+                showAlert(result.error || 'Registration failed. Please try again.', 'danger');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            showAlert('Backend server error. Please ensure the Django server is running.', 'danger');
+            const submitBtn = registerForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Create Account';
         }
-
-        // Create new user
-        const newUser = {
-            id: Date.now(),
-            name: fullName,
-            email: email,
-            mobile: mobile,
-            password: password, // In production, this should be hashed
-            status: 'pending', // Needs admin activation
-            registeredAt: new Date().toISOString()
-        };
-
-        // Save user
-        users.push(newUser);
-        localStorage.setItem('users', JSON.stringify(users));
-
-        // Show success message
-        showAlert('Registration successful! Please wait for admin activation before logging in.', 'success');
-
-        // Reset form
-        registerForm.reset();
-
-        // Redirect after delay
-        setTimeout(() => {
-            window.location.href = 'login.html';
-        }, 2000);
     });
 }
 
@@ -96,7 +102,7 @@ if (registerForm) {
 const loginForm = document.getElementById('loginForm');
 
 if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         // Get form values
@@ -121,36 +127,46 @@ if (loginForm) {
 
         if (!isValid) return;
 
-        // Find user
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
-        const user = users.find(u => u.email === email && u.password === password);
+        try {
+            // Show loading state
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
 
-        if (!user) {
-            showAlert('Invalid email or password. Please try again.', 'danger');
-            return;
+            const response = await fetch(`${API_BASE_URL}/api/login/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Save current user session in localStorage for frontend access
+                localStorage.setItem('currentUser', JSON.stringify(result.user));
+                
+                showAlert('Login successful! Redirecting...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'user-dashboard.html';
+                }, 1000);
+            } else {
+                showAlert(result.error || 'Invalid email or password.', 'danger');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            showAlert('Backend server error. Please ensure the Django server is running.', 'danger');
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Login';
         }
-
-        // Check if user is activated
-        if (user.status !== 'active') {
-            showAlert('Your account is pending activation. Please contact the admin.', 'warning');
-            return;
-        }
-
-        // Save current user session
-        localStorage.setItem('currentUser', JSON.stringify({
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            mobile: user.mobile
-        }));
-
-        // Show success
-        showAlert('Login successful! Redirecting...', 'success');
-
-        // Redirect to dashboard
-        setTimeout(() => {
-            window.location.href = 'user-dashboard.html';
-        }, 1000);
     });
 }
 

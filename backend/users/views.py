@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse
 from .forms import UserRegistrationForm
-from .models import UserRegistrationModel,UserImagePredictinModel
+from .models import UserRegistrationModel,UserImagePredictionModel
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
 from .utility.GetImageStressDetection import ImageExpressionDetect
@@ -60,7 +60,7 @@ def UserHome(request):
 
 def UploadImageForm(request):
     loginid = request.session['loginid']
-    data = UserImagePredictinModel.objects.filter(loginid=loginid)
+    data = UserImagePredictionModel.objects.filter(loginid=loginid)
     return render(request, 'users/UserImageUploadForm.html', {'data': data})
 
 def UploadImageAction(request):
@@ -79,8 +79,8 @@ def UploadImageAction(request):
     username = request.session['loggeduser']
     loginid = request.session['loginid']
     email = request.session['email']
-    UserImagePredictinModel.objects.create(username=username,email=email,loginid=loginid,filename=filename,emotions=emotion,file=uploaded_file_url)
-    data = UserImagePredictinModel.objects.filter(loginid=loginid)
+    UserImagePredictionModel.objects.create(username=username,email=email,loginid=loginid,filename=filename,emotions=emotion,file=uploaded_file_url)
+    data = UserImagePredictionModel.objects.filter(loginid=loginid)
     return render(request, 'users/UserImageUploadForm.html', {'data':data})
 
 def UserEmotionsDetect(request):
@@ -89,7 +89,7 @@ def UserEmotionsDetect(request):
         obj = ImageExpressionDetect()
         emotion = obj.getExpression(imgname)
         loginid = request.session['loginid']
-        data = UserImagePredictinModel.objects.filter(loginid=loginid)
+        data = UserImagePredictionModel.objects.filter(loginid=loginid)
         return render(request, 'users/UserImageUploadForm.html', {'data': data})
 
 def UserLiveCameDetect(request):

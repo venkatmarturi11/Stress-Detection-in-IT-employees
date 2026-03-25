@@ -19,6 +19,7 @@ from users.views import result_view
 from StressDetection import views as mainView
 from StressDetection import api_views  # Import API views
 from users import views as usr
+from users import api_views as user_api  # Import new user API views
 from admins import views as admins
 from django.contrib.staticfiles.urls import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -52,6 +53,11 @@ urlpatterns = [
     path("UserKerasModel/", usr.UserKerasModel, name="UserKerasModel"),
     path("UserKnnResults/", usr.UserKnnResults, name="UserKnnResults"),
     path("api/survey-predict/", usr.SurveyPrediction, name="SurveyPrediction"),
+    
+    # New JSON API endpoints for frontend
+    path("api/register/", user_api.api_register, name="api_register"),
+    path("api/login/", user_api.api_login, name="api_login"),
+    path("api/results/", user_api.api_results, name="api_results"),
 
     ### Admin Side Views
     path("AdminLoginCheck/", admins.AdminLoginCheck, name="AdminLoginCheck"),

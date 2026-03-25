@@ -660,12 +660,13 @@
             };
 
             // Simulate API call (XGBoost prediction)
-            setTimeout(() => {
+            setTimeout(async () => {
                 const result = predictStress(formData);
                 displayResults(result, formData);
 
-                // Save to localStorage
-                saveResult(result, formData);
+                // Save result
+                await saveResult(result, formData);
+
 
                 // Hide loading and show results
                 document.getElementById('loadingOverlay').classList.remove('show');
@@ -823,21 +824,47 @@
             return recs.slice(0, 4);
         }
 
-        // Save result to localStorage
-        function saveResult(result, formData) {
-            const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+        // Save result to backend
+        async function saveResult(result, formData) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const stressLevel = parseFloat(result.percentage) > 60 ? 'High' : parseFloat(result.percentage) > 35 ? 'Medium' : 'Low';
+            
+            const dataToSave = {
+                ...formData,
+                percentage: parseFloat(result.percentage),
+                risk: stressLevel,
+                email: currentUser.email || 'guest@example.com',
+                userName: currentUser.name || 'Guest'
+            };
 
+            // Save to Local Storage as Backup
+            const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
             results.push({
                 ...result,
                 surveyData: formData,
-                stressLevel: parseFloat(result.percentage) > 60 ? 'High' : parseFloat(result.percentage) > 35 ? 'Medium' : 'Low',
+                stressLevel: stressLevel,
                 detectionMethod: 'XGBoost Survey Prediction',
                 confidence: 85,
-                emotion: parseFloat(result.percentage) > 60 ? 'Stressed' : parseFloat(result.percentage) > 35 ? 'Concerned' : 'Relaxed'
+                emotion: stressLevel === 'High' ? 'Stressed' : stressLevel === 'Medium' ? 'Concerned' : 'Relaxed',
+                timestamp: new Date().toISOString()
             });
-
             localStorage.setItem('stressResults', JSON.stringify(results));
+
+            if (currentUser.email) {
+                try {
+                    const response = await fetch('http://localhost:8000/api/results/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(dataToSave)
+                    });
+                    if (response.ok) console.log('✅ Survey result saved to backend');
+                    else console.warn('⚠️ Backend survey save failed:', response.status);
+                } catch (e) {
+                    console.error('❌ Failed to save survey result to backend', e);
+                }
+            }
         }
+
 
         // Reset form
         function resetForm() {

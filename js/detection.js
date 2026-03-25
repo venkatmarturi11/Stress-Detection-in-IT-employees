@@ -13,8 +13,10 @@ const API_CONFIG = {
     detectEndpoint: '/api/detect/',
     knnEndpoint: '/api/knn-results/',
     healthEndpoint: '/api/health/',
+    resultsEndpoint: '/api/results/',
     timeout: 10000  // 10 seconds
 };
+
 
 // Backend availability status
 let backendAvailable = null;
@@ -1004,31 +1006,84 @@ async function getKNNResults() {
 }
 
 /**
- * Save stress detection result to localStorage
+ * Save stress detection result to backend
  */
-function saveResult(result) {
-    const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
-    results.push(result);
-    localStorage.setItem('stressResults', JSON.stringify(results));
+async function saveResult(result) {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    
+    // Preparation for backend
+    const resultToSave = {
+        ...result,
+        email: currentUser.email || 'guest@example.com',
+        userName: currentUser.name || 'Guest',
+        stressLevel: result.stressLevel,
+        emotion: result.emotion,
+        confidence: result.confidence,
+        eyeStrain: result.eyeStrain,
+        browTension: result.browTension,
+        facialFatigue: result.facialFatigue,
+        filename: result.filename || 'scan.jpg'
+    };
+
+    // Save to Local Storage as Backup
+    const localResults = JSON.parse(localStorage.getItem('stressResults') || '[]');
+    localResults.push(resultToSave);
+    localStorage.setItem('stressResults', JSON.stringify(localResults));
+
+    if (currentUser.email) {
+        try {
+            const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.resultsEndpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(resultToSave)
+            });
+
+            if (response.ok) {
+                console.log('✅ Result saved successfully to backend');
+            } else {
+                console.warn('⚠️ Backend save failed:', response.status);
+            }
+        } catch (error) {
+            console.error('❌ Error saving to backend:', error);
+        }
+    }
 }
 
 /**
  * Get stress detection history
  */
-function getResultsHistory() {
+async function getResultsHistory() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    
+    if (currentUser.email) {
+        try {
+            const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.resultsEndpoint}?email=${currentUser.email}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    // Update local storage cache
+                    localStorage.setItem('stressResults', JSON.stringify(data.results));
+                    return data.results;
+                }
+            }
+        } catch (error) {
+            console.error('❌ Error fetching from backend:', error);
+        }
+    }
+    
     return JSON.parse(localStorage.getItem('stressResults') || '[]');
 }
 
 /**
  * Get user statistics
  */
-function getUserStats() {
-    const results = getResultsHistory();
+async function getUserStats() {
+    const results = await getResultsHistory();
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
 
-    const userResults = currentUser.email
-        ? results.filter(r => r.userEmail === currentUser.email)
-        : results;
+    const userResults = results; // API filters by email already
 
     if (userResults.length === 0) {
         return {
@@ -1046,15 +1101,17 @@ function getUserStats() {
     };
 
     const avgConfidence = Math.round(
-        userResults.reduce((acc, r) => acc + r.confidence, 0) / userResults.length
+        userResults.reduce((acc, r) => acc + (r.confidence || 0), 0) / userResults.length
     );
 
     const emotionCounts = {};
     userResults.forEach(r => {
-        emotionCounts[r.emotion] = (emotionCounts[r.emotion] || 0) + 1;
+        const emotion = r.emotion || r.emotions || 'Unknown';
+        emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;
     });
-    const commonEmotion = Object.entries(emotionCounts)
-        .sort((a, b) => b[1] - a[1])[0][0];
+    
+    const sortedEmotions = Object.entries(emotionCounts).sort((a, b) => b[1] - a[1]);
+    const commonEmotion = sortedEmotions.length > 0 ? sortedEmotions[0][0] : 'N/A';
 
     return {
         totalScans: userResults.length,
@@ -1063,6 +1120,7 @@ function getUserStats() {
         commonEmotion: commonEmotion
     };
 }
+
 
 // Initialize - check backend on load
 checkBackendHealth();

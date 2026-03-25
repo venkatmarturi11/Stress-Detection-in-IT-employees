@@ -579,24 +579,31 @@
     <script src="js/detection.js"></script>
     <script>
         // Initialize dashboard
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             // Set current date
             const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', dateOptions);
 
             // Check if user is logged in
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-            if (currentUser.name) {
-                document.getElementById('userName').textContent = currentUser.name;
-                document.getElementById('userAvatar').textContent = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            const userName = currentUser.name || currentUser.username || currentUser.fullName || 'Guest';
+            
+            document.getElementById('userName').textContent = userName;
+            const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('userAvatar').textContent = initials;
+            
+            if (!currentUser.email && window.location.pathname.includes('dashboard')) {
+                console.warn('No active session found, some features may be limited');
             }
 
+
             // Load user stats
-            loadUserStats();
+            await loadUserStats();
 
             // Load recent scans
-            loadRecentScans();
+            await loadRecentScans();
         });
+
 
         // File upload handling
         const uploadZone = document.getElementById('uploadZone');
@@ -1084,7 +1091,8 @@
             }
         });
 
-        function showResult(result) {
+        async function showResult(result) {
+
             const resultSection = document.getElementById('resultSection');
             const tipsSection = document.getElementById('tipsSection');
             const adviceSection = document.getElementById('adviceSection');
@@ -1117,9 +1125,10 @@
             showStressRelief(result);
 
             // Update stats
-            loadUserStats();
-            loadRecentScans();
+            await loadUserStats();
+            await loadRecentScans();
         }
+
 
         // Update algorithm analysis display
         function updateAlgorithmAnalysis(result) {
@@ -1334,18 +1343,20 @@
         }
 
         // Load user stats
-        function loadUserStats() {
-            const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+        async function loadUserStats() {
+            const stats = await getUserStats();
 
-            document.getElementById('totalScans').textContent = results.length;
-            document.getElementById('lowStressCount').textContent = results.filter(r => r.stressLevel === 'Low').length;
-            document.getElementById('mediumStressCount').textContent = results.filter(r => r.stressLevel === 'Medium').length;
-            document.getElementById('highStressCount').textContent = results.filter(r => r.stressLevel === 'High').length;
+            document.getElementById('totalScans').textContent = stats.totalScans;
+            document.getElementById('lowStressCount').textContent = stats.stressDistribution.Low;
+            document.getElementById('mediumStressCount').textContent = stats.stressDistribution.Medium;
+            document.getElementById('highStressCount').textContent = stats.stressDistribution.High;
         }
 
+
         // Load recent scans
-        function loadRecentScans() {
-            const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+        async function loadRecentScans() {
+            const results = await getResultsHistory();
+
             const tableBody = document.getElementById('recentScansTable');
 
             if (results.length === 0) {
@@ -1366,16 +1377,20 @@
           <td>${new Date(result.timestamp).toLocaleString()}</td>
           <td>
             <span style="display: flex; align-items: center; gap: 0.5rem;">
-              <span style="font-size: 1.2rem;">${getEmotionEmoji(result.emotion)}</span>
-              ${result.emotion}
+              <span style="font-size: 1.2rem;">${getEmotionEmoji(result.type === 'survey' ? 'Neutral' : result.emotion)}</span>
+              ${result.type === 'survey' ? 'Survey Result' : (result.emotion || 'Analyzing')}
             </span>
           </td>
+
           <td>
             <span class="badge badge-${result.stressLevel === 'Low' ? 'success' : result.stressLevel === 'Medium' ? 'warning' : 'danger'}">
               ${result.stressLevel}
             </span>
           </td>
-          <td>${result.confidence}%</td>
+          <td>
+            ${result.type === 'survey' ? `Score: ${result.percentage}%` : `${result.confidence || 0}%`}
+          </td>
+
         </tr>
       `).join('');
         }

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib import messages
-from users.models import UserRegistrationModel,UserImagePredictinModel
+from users.models import UserRegistrationModel,UserImagePredictionModel
 from .utility.AlgorithmExecutions import KNNclassifier
 
 # Create your views here.
@@ -38,7 +38,7 @@ def AdminActivaUsers(request):
         return render(request, 'admins/RegisteredUsers.html', {'data': data})
 
 def AdminStressDetected(request):
-    data = UserImagePredictinModel.objects.all()
+    data = UserImagePredictionModel.objects.all()
     return render(request, 'admins/AllUsersStressView.html', {'data': data})
 
 def AdminKNNResults(request):

@@ -445,18 +445,23 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- Scripts -->
+    <script src="js/app.js"></script>
+    <script src="js/detection.js"></script>
     <script>
+
         // Initialize results page
-        document.addEventListener('DOMContentLoaded', () => {
-            loadResults();
-            loadStats();
-            loadAlgorithmAnalysis();
-            loadEnhancedRelief();
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadResults();
+            await loadStats();
+            await loadAlgorithmAnalysis();
+            await loadEnhancedRelief();
         });
 
+
         // Load results table
-        function loadResults(filter = '') {
-            let results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+        async function loadResults(filter = '') {
+            let results = await getResultsHistory();
+
 
             if (filter) {
                 results = results.filter(r => r.stressLevel === filter);
@@ -483,8 +488,8 @@
           <td>${new Date(result.timestamp).toLocaleString()}</td>
           <td>
             <span style="display: flex; align-items: center; gap: 0.5rem;">
-              <span style="font-size: 1.2rem;">${getEmotionEmoji(result.emotion)}</span>
-              ${result.emotion}
+              <span style="font-size: 1.2rem;">${getEmotionEmoji(result.type === 'survey' ? 'Neutral' : result.emotion)}</span>
+              ${result.type === 'survey' ? 'Survey Result' : result.emotion}
             </span>
           </td>
           <td>
@@ -492,10 +497,11 @@
               ${result.stressLevel}
             </span>
           </td>
-          <td>${result.eyeStrain}</td>
-          <td>${result.browTension}</td>
-          <td>${result.facialFatigue}</td>
+          <td>${result.eyeStrain || 'N/A'}</td>
+          <td>${result.browTension || 'N/A'}</td>
+          <td>${result.facialFatigue || 'N/A'}</td>
           <td>
+            ${result.type === 'survey' ? `Score: ${result.percentage}%` : `
             <div class="d-flex align-center gap-2">
               <div class="progress" style="width: 60px; height: 6px;">
                 <div class="progress-bar" style="width: ${result.confidence}%;"></div>
@@ -508,8 +514,10 @@
         }
 
         // Load statistics
-        function loadStats() {
-            const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+        async function loadStats() {
+            const results = await getResultsHistory();
+Point:
+
 
             // Total scans
             document.getElementById('totalScans').textContent = results.length;
@@ -626,8 +634,9 @@
         });
 
         // Load Algorithm Analysis
-        function loadAlgorithmAnalysis() {
-            const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+        async function loadAlgorithmAnalysis() {
+            const results = await getResultsHistory();
+
 
             if (results.length === 0) {
                 document.getElementById('trendSummary').textContent = 'No data available. Complete a stress scan to see algorithm analysis.';
@@ -787,8 +796,9 @@
         }
 
         // Load Enhanced Relief Recommendations
-        function loadEnhancedRelief() {
-            const results = JSON.parse(localStorage.getItem('stressResults') || '[]');
+        async function loadEnhancedRelief() {
+            const results = await getResultsHistory();
+
             if (results.length === 0) return;
 
             const latestResult = results[results.length - 1];
