@@ -12,8 +12,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.conf import settings
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
+# TensorFlow and Keras will be imported lazily inside get_model() to prevent memory spikes on startup
+
 
 # Load the model once on startup
 MODEL = None
@@ -34,6 +34,9 @@ def get_model():
     """Load and return the Keras model"""
     global MODEL
     if MODEL is None:
+        from tensorflow.keras.models import Sequential
+        from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
+        
         MODEL = Sequential()
         MODEL.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(48,48,1)))
         MODEL.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
@@ -54,6 +57,7 @@ def get_model():
         if os.path.exists(model_path):
             MODEL.load_weights(model_path)
     return MODEL
+
 
 
 def detect_emotion_from_image(image_data):
