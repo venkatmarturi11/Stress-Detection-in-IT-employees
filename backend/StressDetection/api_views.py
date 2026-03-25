@@ -3,15 +3,12 @@ REST API Views for Stress Detection
 Provides JSON endpoints for the frontend to call for stress detection
 """
 
-import json
-import base64
 import os
-import numpy as np
-import cv2
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.conf import settings
+
 # TensorFlow and Keras will be imported lazily inside get_model() to prevent memory spikes on startup
 
 
@@ -66,7 +63,13 @@ def detect_emotion_from_image(image_data):
     Supports MULTIPLE FACES - analyzes all detected faces
     Returns: dict with emotion, stress level, confidence, facial features, and multi-face data
     """
+    import json
+    import base64
+    import numpy as np
+    import cv2
+    
     try:
+
         model = get_model()
         
         # Decode base64 image
@@ -181,7 +184,9 @@ def detect_emotion_from_image(image_data):
         }
         
     except Exception as e:
+        import json
         return {"success": False, "error": str(e)}
+
 
 
 @csrf_exempt
@@ -201,7 +206,9 @@ def api_detect_stress(request):
         return response
     
     try:
+        import json
         data = json.loads(request.body)
+
         image_data = data.get('image', '')
         
         if not image_data:
@@ -216,7 +223,10 @@ def api_detect_stress(request):
         response["Access-Control-Allow-Origin"] = "*"
         return response
         
-    except json.JSONDecodeError:
+    except Exception as e:
+        import json
+        # In case it failed before json was imported
+
         return JsonResponse({
             "success": False,
             "error": "Invalid JSON data"

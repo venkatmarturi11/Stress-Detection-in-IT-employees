@@ -8,8 +8,9 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import matplotlib as mpl
-mpl.use('TkAgg')
+mpl.use('Agg')
 import matplotlib.pyplot as plt
+
 
 # command line argument
 ap = argparse.ArgumentParser()

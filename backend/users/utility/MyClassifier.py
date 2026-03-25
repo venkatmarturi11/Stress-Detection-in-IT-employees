@@ -1,10 +1,4 @@
 import os
-import pandas as pd
-from matplotlib import pyplot as plt
-from sklearn import preprocessing
-from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn import metrics
 from django.conf import settings
 
 # Global variables for lazy initialization
@@ -25,7 +19,12 @@ def _initialize_data():
         return
         
     try:
+        import pandas as pd
+        from sklearn import preprocessing
+        from sklearn.model_selection import train_test_split
+        
         filepath = os.path.join(settings.MEDIA_ROOT, 'stress_data.xlsx')
+
         if not os.path.exists(filepath):
             print(f"Warning: {filepath} not found. KNN classifier will not work correctly.")
             return
@@ -53,7 +52,11 @@ class KNNclassifier:
     def getKnnResults(self):
         _initialize_data()
         
+        from sklearn.neighbors import KNeighborsClassifier
+        from sklearn import metrics
+        
         if not _DATA_INITIALIZED:
+
             raise RuntimeError("KNN classifier data was not initialized correctly. Check if stress_data.xlsx exists.")
             
         print("Started KNN classification")
