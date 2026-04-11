@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
   animateOnScroll();
   
   // Add active class to current nav link
-  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  const currentPage = window.location.pathname.split('/').pop() || '/index/';
   document.querySelectorAll('.nav-link, .sidebar-link').forEach(link => {
     if (link.getAttribute('href') === currentPage) {
       link.classList.add('active');

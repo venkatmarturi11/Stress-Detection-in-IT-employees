@@ -10,22 +10,21 @@ def AdminLoginCheck(request):
         usrid = request.POST.get('loginid')
         pswd = request.POST.get('pswd')
         print("User ID is = ", usrid)
-        if usrid == 'admin' and pswd == 'admin':
-            return render(request, 'admins/AdminHome.html')
-        elif usrid == 'Admin' and pswd == 'Admin':
-            return render(request, 'admins/AdminHome.html')
+        if usrid.strip().lower() == 'admin' and pswd.strip().lower() == 'admin':
+            from django.shortcuts import redirect
+            return redirect('AdminHome')
         else:
             messages.success(request, 'Please Check Your Login Details')
     return render(request, 'AdminLogin.html', {})
 
 
 def AdminHome(request):
-    return render(request, 'admins/AdminHome.html')
+    return render(request, 'admin-dashboard.html')
 
 
 def ViewRegisteredUsers(request):
     data = UserRegistrationModel.objects.all()
-    return render(request, 'admins/RegisteredUsers.html', {'data': data})
+    return render(request, 'UserRegistrations.html', {'data': data})
 
 
 def AdminActivaUsers(request):
@@ -35,7 +34,7 @@ def AdminActivaUsers(request):
         print("PID = ", id, status)
         UserRegistrationModel.objects.filter(id=id).update(status=status)
         data = UserRegistrationModel.objects.all()
-        return render(request, 'admins/RegisteredUsers.html', {'data': data})
+        return render(request, 'UserRegistrations.html', {'data': data})
 
 def AdminStressDetected(request):
     data = UserImagePredictionModel.objects.all()
@@ -52,3 +51,8 @@ def AdminKNNResults(request):
     return render(request, 'admins/AdminKnnResults.html',
                   {'data': data, 'accuracy': accuracy, 'classificationerror': classificationerror,
                    'sensitivity': sensitivity, "Specificity": Specificity, 'fsp': fsp, 'precision': precision})
+
+# Modern UI additions
+def admin_settings_view(request):
+    return render(request, 'admin-settings.html', {})
+

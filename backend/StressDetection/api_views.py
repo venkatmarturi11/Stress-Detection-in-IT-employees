@@ -223,10 +223,7 @@ def api_detect_stress(request):
         response["Access-Control-Allow-Origin"] = "*"
         return response
         
-    except Exception as e:
-        import json
-        # In case it failed before json was imported
-
+    except (ValueError, KeyError) as e:
         return JsonResponse({
             "success": False,
             "error": "Invalid JSON data"

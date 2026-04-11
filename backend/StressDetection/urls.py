@@ -54,14 +54,33 @@ urlpatterns = [
     path("UserKnnResults/", usr.UserKnnResults, name="UserKnnResults"),
     path("api/survey-predict/", usr.SurveyPrediction, name="SurveyPrediction"),
     
+    # New Modern Theme Frontend Routes Additions
+    path("results/", usr.user_results_view, name="user_results"),
+    path("settings/", usr.user_settings_view, name="user_settings"),
+    path("survey/", usr.survey_prediction_view, name="survey_prediction"),
+    
     # New JSON API endpoints for frontend
     path("api/register/", user_api.api_register, name="api_register"),
     path("api/login/", user_api.api_login, name="api_login"),
     path("api/results/", user_api.api_results, name="api_results"),
+    
+    # Admin API endpoints
+    path("api/admin/users/", user_api.api_admin_get_users, name="api_admin_get_users"),
+    path("api/admin/results/", user_api.api_admin_get_results, name="api_admin_get_results"),
+    path("api/admin/update-status/", user_api.api_admin_update_status, name="api_admin_update_status"),
+    path("api/admin/delete-user/", user_api.api_admin_delete_user, name="api_admin_delete_user"),
+    path("api/admin/reset-password/", user_api.api_admin_reset_password, name="api_admin_reset_password"),
+    path("api/admin/delete-all-results/", user_api.api_admin_delete_all_results, name="api_admin_delete_all_results"),
+
+    # User Profile APIs
+    path("api/user/update-profile/", user_api.api_user_update_profile, name="api_user_update_profile"),
+    path("api/user/change-password/", user_api.api_user_change_password, name="api_user_change_password"),
+    path("api/user/delete-account/", user_api.api_user_delete_account, name="api_user_delete_account"),
 
     ### Admin Side Views
     path("AdminLoginCheck/", admins.AdminLoginCheck, name="AdminLoginCheck"),
     path("AdminHome/", admins.AdminHome, name="AdminHome"),
+    path("admin-settings/", admins.admin_settings_view, name="admin_settings"),
     path("ViewRegisteredUsers/", admins.ViewRegisteredUsers, name="ViewRegisteredUsers"),
     path("AdminActivaUsers/", admins.AdminActivaUsers, name="AdminActivaUsers"),
     path("AdminStressDetected/", admins.AdminStressDetected, name="AdminStressDetected"),

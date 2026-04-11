@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+try:
+    import dotenv
+    dotenv.load_dotenv()
+except ImportError:
+    pass  # python-dotenv not installed, skip .env loading
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,13 +25,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '@=sbu6*esnixm37fq329)!qn#5*m27*sey%5pmfb#g+=qw+88('
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '@=sbu6*esnixm37fq329)!qn#5*m27*sey%5pmfb#g+=qw+88(')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com', '*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com']
 
 
 # Application definition
@@ -88,10 +93,15 @@ DATABASES = {
     }
 }
 
-# Database configuration for Render (PostgreSQL)
-import dj_database_url
-db_from_env = dj_database_url.config(conn_max_age=600)
-DATABASES['default'].update(db_from_env)
+# If DATABASE_URL is set (e.g. on Render / production), override with it
+try:
+    import dj_database_url
+    if os.environ.get('DATABASE_URL'):
+        _db_from_env = dj_database_url.config(default=None, conn_max_age=600)
+        if _db_from_env:
+            DATABASES['default'].update(_db_from_env)
+except ImportError:
+    pass  # dj-database-url not installed, use default SQLite
 
 
 # Password validation
@@ -133,8 +143,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'assets/static'), ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-WHITENOISE_MANIFEST_STRICT = False
+try:
+    import whitenoise  # noqa: F401
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    WHITENOISE_MANIFEST_STRICT = False
+except ImportError:
+    pass  # whitenoise not installed, use default static storage
 
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

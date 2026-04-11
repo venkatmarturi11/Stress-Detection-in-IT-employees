@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% load static %}\n<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 
 <head>
@@ -18,8 +18,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=2.1">
+    <link rel="stylesheet" href="{% static 'css/animations.css' %}?v=2.1">
 
     <style>
         .admin-login-page {
@@ -657,7 +657,7 @@
                     <span>Quick Access</span>
                 </div>
 
-                <a href="login.html" class="admin-back-link">
+                <a href="{% url 'UserLogin' %}" class="admin-back-link">
                     <i class="fas fa-arrow-left"></i>
                     Back to User Login
                 </a>
@@ -670,7 +670,7 @@
                     </div>
                     <div class="admin-credential-row">
                         <span>Password:</span>
-                        <code>admin123</code>
+                        <code>admin</code>
                     </div>
                 </div>
 
@@ -682,7 +682,8 @@
         </div>
     </div>
 
-    <script src="js/app.js"></script>
+    <script src="{% static 'js/config.js' %}?v=2.1"></script>
+    <script src="{% static 'js/app.js' %}?v=2.1"></script>
     <script>
         // Toggle password visibility
         const togglePassword = document.getElementById('togglePassword');
@@ -704,7 +705,7 @@
 
             // Get stored admin credentials
             const storedAdminId = localStorage.getItem('adminId') || 'admin';
-            const storedAdminPassword = localStorage.getItem('adminPassword') || 'admin123';
+            const storedAdminPassword = localStorage.getItem('adminPassword') || 'admin';
 
             // Validate credentials
             if (adminId === storedAdminId && password === storedAdminPassword) {
@@ -724,7 +725,7 @@
                 showToast('Login successful! Redirecting...', 'success');
 
                 setTimeout(() => {
-                    window.location.href = 'admin-dashboard.html';
+                    window.location.href = "{% url 'AdminHome' %}";
                 }, 1000);
             } else {
                 // Log failed attempt
@@ -759,7 +760,7 @@
 
         // Check if already logged in
         if (sessionStorage.getItem('adminLoggedIn') === 'true') {
-            window.location.href = 'admin-dashboard.html';
+            window.location.href = "{% url 'AdminHome' %}";
         }
 
         // Toast function (fallback if app.js not loaded)

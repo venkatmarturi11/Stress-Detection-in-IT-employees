@@ -44,19 +44,20 @@ def UserLoginCheck(request):
                 request.session['loginid'] = loginid
                 request.session['email'] = check.email
                 print("User id At", check.id, status)
-                return render(request, 'users/UserHome.html', {})
+                from django.shortcuts import redirect
+                return redirect('UserHome')
             else:
                 messages.success(request, 'Your Account Not at activated')
-                return render(request, 'UserLogin.html')
+                return render(request, 'login.html')
         except Exception as e:
             print('Exception is ', str(e))
             pass
         messages.success(request, 'Invalid Login id and password')
-    return render(request, 'UserLogin.html', {})
+    return render(request, 'login.html', {})
 
 
 def UserHome(request):
-    return render(request, 'users/UserHome.html', {})
+    return render(request, 'user-dashboard.html', {})
 
 def UploadImageForm(request):
     loginid = request.session['loginid']
@@ -100,7 +101,7 @@ def UserLiveCameDetect(request):
 def UserKerasModel(request):
     # p = Popen(["python", "kerasmodel.py --mode display"], cwd='StressDetection', stdout=PIPE, stderr=PIPE)
     # out, err = p.communicate()
-    subprocess.call("python kerasmodel.py --mode display")
+    subprocess.call(["python", "kerasmodel.py", "--mode", "display"], cwd=os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     return render(request, 'users/UserLiveHome.html', {})
 
 def UserKnnResults(request):
@@ -265,3 +266,14 @@ def rule_based_stress_prediction(data):
         'factor_impacts': factor_impacts,
         'algorithm': 'RuleBased'
     }
+
+# Modern UI additions
+def user_results_view(request):
+    return render(request, 'results.html', {})
+
+def user_settings_view(request):
+    return render(request, 'settings.html', {})
+
+def survey_prediction_view(request):
+    return render(request, 'survey-prediction.html', {})
+

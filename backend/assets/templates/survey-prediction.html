@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% load static %}\n<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 
 <head>
@@ -10,8 +10,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=2.1">
+    <link rel="stylesheet" href="{% static 'css/animations.css' %}?v=2.1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -601,10 +601,10 @@
                 <button class="btn btn-secondary" onclick="resetForm()">
                     <i class="fas fa-redo"></i> New Assessment
                 </button>
-                <a href="user-dashboard.html" class="btn btn-secondary">
+                <a href="{% url 'UserHome' %}" class="btn btn-secondary">
                     <i class="fas fa-camera"></i> Try Image Scan
                 </a>
-                <a href="results.html" class="btn btn-primary">
+                <a href="{% url 'user_results' %}" class="btn btn-primary">
                     <i class="fas fa-history"></i> View All Results
                 </a>
             </div>
@@ -632,6 +632,8 @@
         <p>Analyzing with XGBoost Model...</p>
     </div>
 
+    <script src="{% static 'js/config.js' %}?v=2.1"></script>
+    <script src="{% static 'js/app.js' %}?v=2.1"></script>
     <script>
         // Mental fatigue slider
         const fatigueSlider = document.getElementById('mentalFatigue');
@@ -852,7 +854,7 @@
 
             if (currentUser.email) {
                 try {
-                    const response = await fetch('http://localhost:8000/api/results/', {
+                    const response = await fetch(`${CONFIG.API_BASE_URL}/api/results/`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(dataToSave)
