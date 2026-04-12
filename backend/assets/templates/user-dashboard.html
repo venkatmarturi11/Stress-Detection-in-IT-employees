@@ -881,7 +881,7 @@
             document.getElementById('livePeakStress').textContent = '--';
             document.getElementById('liveSessionTime').textContent = '00:00';
 
-            cameraHintText.textContent = 'Analyzing continuously... Results update every 2 seconds';
+            cameraHintText.textContent = 'Analyzing continuously... Results update every 5 seconds';
 
             // Start session timer
             liveSessionTimer = setInterval(() => {
@@ -893,9 +893,9 @@
 
             // Start continuous detection
             performLiveDetection();
-            liveMonitorInterval = setInterval(performLiveDetection, 2000);
+            liveMonitorInterval = setInterval(performLiveDetection, 5000);
 
-            showToast('Live monitoring started! Results update every 2 seconds.', 'success');
+            showToast('Live monitoring started! Results update every 5 seconds.', 'success');
         });
 
         // Perform Live Detection (captures frame and analyzes)
