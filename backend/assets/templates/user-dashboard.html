@@ -881,7 +881,7 @@
             document.getElementById('livePeakStress').textContent = '--';
             document.getElementById('liveSessionTime').textContent = '00:00';
 
-            cameraHintText.textContent = 'Analyzing continuously... Results update every 5 seconds';
+            cameraHintText.textContent = 'Analyzing continuously... Results update every 1 second';
 
             // Start session timer
             liveSessionTimer = setInterval(() => {
@@ -893,10 +893,12 @@
 
             // Start continuous detection
             performLiveDetection();
-            liveMonitorInterval = setInterval(performLiveDetection, 5000);
+            liveMonitorInterval = setInterval(performLiveDetection, 1000);
 
-            showToast('Live monitoring started! Results update every 5 seconds.', 'success');
+            showToast('Live monitoring started! Results update every 1 second.', 'success');
         });
+
+        let isDetecting = false; // Flag to prevent overlapping requests
 
         // Perform Live Detection (captures frame and analyzes)
         async function performLiveDetection() {
@@ -904,6 +906,9 @@
                 stopLiveMonitoring();
                 return;
             }
+            
+            if (isDetecting) return; // Skip if previous frame is still processing
+            isDetecting = true;
 
             // Capture current frame
             cameraCanvas.width = cameraVideo.videoWidth;
@@ -930,6 +935,8 @@
                 updateLiveSessionStats();
             } catch (error) {
                 console.error('Live detection error:', error);
+            } finally {
+                isDetecting = false; // Release lock
             }
         }
 
