@@ -1,4 +1,5 @@
-{% load static %}\n<!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 
 <head>
@@ -830,7 +831,7 @@
         async function saveResult(result, formData) {
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
             const stressLevel = parseFloat(result.percentage) > 60 ? 'High' : parseFloat(result.percentage) > 35 ? 'Medium' : 'Low';
-            
+
             const dataToSave = {
                 ...formData,
                 percentage: parseFloat(result.percentage),

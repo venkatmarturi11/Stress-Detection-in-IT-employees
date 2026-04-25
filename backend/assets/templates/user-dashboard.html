@@ -1,4 +1,5 @@
-{% load static %}\n<!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 
 <head>
@@ -188,41 +189,35 @@
 
                             <!-- Live Results Overlay -->
                             <div id="liveResultsOverlay" class="d-none"
-                                style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 1.5rem; color: white;">
-                                <div
-                                    style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center;">
+                                style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.95)); padding: 1rem 1.25rem; color: white;">
+                                <!-- Main Row: Stress, Emotion, Confidence -->
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem; margin-bottom: 0.75rem;">
                                     <div>
-                                        <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 0.25rem;">Stress
-                                            Level</div>
-                                        <div id="liveStressLevel"
-                                            style="font-size: 1.1rem; font-weight: 700; color: var(--success);">--</div>
+                                        <div style="font-size: 0.65rem; opacity: 0.6; text-transform: uppercase; margin-bottom: 0.15rem;">Stress Level</div>
+                                        <div id="liveStressLevel" style="font-size: 0.95rem; font-weight: 700; color: var(--success);">--</div>
                                     </div>
                                     <div>
-                                        <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 0.25rem;">Emotion
-                                        </div>
-                                        <div id="liveEmotion" style="font-size: 1.1rem; font-weight: 700;">--</div>
+                                        <div style="font-size: 0.65rem; opacity: 0.6; text-transform: uppercase; margin-bottom: 0.15rem;">Emotion</div>
+                                        <div id="liveEmotion" style="font-size: 0.95rem; font-weight: 700;">--</div>
                                     </div>
                                     <div>
-                                        <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 0.25rem;">
-                                            Confidence</div>
-                                        <div id="liveConfidence"
-                                            style="font-size: 1.1rem; font-weight: 700; color: var(--primary-400);">--%
-                                        </div>
+                                        <div style="font-size: 0.65rem; opacity: 0.6; text-transform: uppercase; margin-bottom: 0.15rem;">Confidence</div>
+                                        <div id="liveConfidence" style="font-size: 0.95rem; font-weight: 700; color: var(--primary-400);">--%</div>
                                     </div>
                                 </div>
-                                <div
-                                    style="margin-top: 0.75rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; font-size: 0.75rem;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="opacity: 0.7;">Eye Strain:</span>
-                                        <span id="liveEyeStrain">--</span>
+                                <!-- Inline Indicators: Eye, Brow, Fatigue -->
+                                <div style="display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.7rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.3rem; background: rgba(255,255,255,0.05); padding: 0.2rem 0.4rem; border-radius: 4px;">
+                                        <span style="opacity: 0.6;">Eye:</span>
+                                        <span id="liveEyeStrain" style="font-weight: 600;">--</span>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="opacity: 0.7;">Brow:</span>
-                                        <span id="liveBrowTension">--</span>
+                                    <div style="display: flex; align-items: center; gap: 0.3rem; background: rgba(255,255,255,0.05); padding: 0.2rem 0.4rem; border-radius: 4px;">
+                                        <span style="opacity: 0.6;">Brow:</span>
+                                        <span id="liveBrowTension" style="font-weight: 600;">--</span>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="opacity: 0.7;">Fatigue:</span>
-                                        <span id="liveFatigue">--</span>
+                                    <div style="display: flex; align-items: center; gap: 0.3rem; background: rgba(255,255,255,0.05); padding: 0.2rem 0.4rem; border-radius: 4px;">
+                                        <span style="opacity: 0.6;">Fatigue:</span>
+                                        <span id="liveFatigue" style="font-weight: 600;">--</span>
                                     </div>
                                 </div>
                             </div>
@@ -588,11 +583,11 @@
             // Check if user is logged in
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
             const userName = currentUser.name || currentUser.username || currentUser.fullName || 'Guest';
-            
+
             document.getElementById('userName').textContent = userName;
             const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase();
             document.getElementById('userAvatar').textContent = initials;
-            
+
             if (!currentUser.email && window.location.pathname.includes('dashboard')) {
                 console.warn('No active session found, some features may be limited');
             }
@@ -893,7 +888,7 @@
 
             // Start continuous detection
             performLiveDetection();
-            liveMonitorInterval = setInterval(performLiveDetection, 1000);
+            liveMonitorInterval = setInterval(performLiveDetection, 300); // 300ms for "Instant" feel
 
             showToast('Live monitoring started! Results update every 1 second.', 'success');
         });
@@ -906,7 +901,7 @@
                 stopLiveMonitoring();
                 return;
             }
-            
+
             if (isDetecting) return; // Skip if previous frame is still processing
             isDetecting = true;
 
@@ -1069,8 +1064,8 @@
             }, 200);
 
             try {
-                // Call detectStress with await (it's an async function!)
-                const result = await detectStress();
+                // Call detectStress with forceBackend=true for high accuracy on single analysis
+                const result = await detectStress(true);
 
                 clearInterval(progressInterval);
                 progressBar.style.width = '100%';

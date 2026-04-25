@@ -1,4 +1,5 @@
-{% load static %}\n<!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 
 <head>
@@ -305,9 +306,9 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/api/admin/users/`);
                 const data = await response.json();
-                
+
                 if (!data.success) throw new Error(data.error);
-                
+
                 const users = data.users;
                 const tableBody = document.getElementById('usersTableBody');
 
@@ -344,20 +345,20 @@
                         <td>${user.registeredAt && user.registeredAt !== 'N/A' ? new Date(user.registeredAt).toLocaleDateString() : 'N/A'}</td>
                         <td>
                             ${user.status === 'waiting' || user.status === 'pending'
-                                ? `<button class="btn btn-success btn-sm" onclick="updateUserStatus('${user.email}', 'activated')" style="margin-right: 5px;">
+                        ? `<button class="btn btn-success btn-sm" onclick="updateUserStatus('${user.email}', 'activated')" style="margin-right: 5px;">
                                     <i class="fas fa-check"></i> Activate
                                    </button>`
-                                : `<button class="btn btn-warning btn-sm" onclick="updateUserStatus('${user.email}', 'waiting')" style="margin-right: 5px;">
+                        : `<button class="btn btn-warning btn-sm" onclick="updateUserStatus('${user.email}', 'waiting')" style="margin-right: 5px;">
                                     <i class="fas fa-ban"></i> Deactivate
                                    </button>`
-                            }
+                    }
                             <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.email}')" title="Delete User">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </td>
                     </tr>
                 `).join('');
-                
+
                 return users;
             } catch (error) {
                 console.error('Fetch users error:', error);
@@ -373,7 +374,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, status })
                 });
-                
+
                 const result = await response.json();
                 if (result.success) {
                     showToast(`User status updated to ${status}`, 'success');
@@ -395,7 +396,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email })
                 });
-                
+
                 const result = await response.json();
                 if (result.success) {
                     showToast(`User deleted successfully`, 'success');
@@ -413,9 +414,9 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/api/admin/results/`);
                 const data = await response.json();
-                
+
                 if (!data.success) throw new Error(data.error);
-                
+
                 const results = data.results;
                 const tableBody = document.getElementById('resultsTableBody');
 
@@ -451,7 +452,7 @@
                         <td>${result.type === 'survey' ? (result.percentage + '%') : (result.confidence + '%')}</td>
                     </tr>
                 `).join('');
-                
+
                 return results;
             } catch (error) {
                 console.error('Fetch results error:', error);

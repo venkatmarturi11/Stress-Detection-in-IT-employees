@@ -135,17 +135,20 @@ async function checkBackendHealth() {
 
 /**
  * Detect stress using the Python backend (real CNN model)
- * Supports MULTIPLE FACES detection
  */
 async function detectWithBackend(imageDataUrl) {
     try {
+        // OPTIMIZATION: Resize to exactly 48x48 grayscale (what the model expects)
+        // This makes the payload tiny and the detection very fast
+        const optimizedImage = await preprocessImageForCNN(imageDataUrl); 
+        
         const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.detectEndpoint}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                image: imageDataUrl
+                image: optimizedImage
             })
         });
 
@@ -921,9 +924,9 @@ async function detectClientSideFallback(imageDataUrl) {
 
 /**
  * Main stress detection function
- * Tries backend first, falls back to client-side if unavailable
+ * Prioritizes backend for accuracy, but uses optimized tiny payloads
  */
-async function detectStress() {
+async function detectStress(forceBackend = true) { // Default to true now for accuracy
     const imageDataUrl = window.uploadedImage;
 
     if (!imageDataUrl) {
@@ -939,17 +942,15 @@ async function detectStress() {
         };
     }
 
-    // Check backend availability if not already checked
+    // Try backend first for accuracy (optimized for speed)
     if (backendAvailable === null) {
         await checkBackendHealth();
     }
 
-    // Try backend first
     if (backendAvailable) {
         try {
             const result = await detectWithBackend(imageDataUrl);
-            console.log('🧠 Detection via CNN Backend:', result);
-
+            
             // Add user info
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
             result.userName = currentUser.name || 'Anonymous';
@@ -961,16 +962,41 @@ async function detectStress() {
         }
     }
 
-    // Fallback to client-side
-    const result = await detectClientSide(imageDataUrl);
-    console.log('📊 Detection via Client-side Analysis:', result);
+    // Fallback to Client-Side (Face-API.js) if backend is down
+    return await detectClientSide(imageDataUrl);
+}
 
-    // Add user info
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    result.userName = currentUser.name || 'Anonymous';
-    result.userEmail = currentUser.email || '';
-
-    return result;
+/**
+ * Aggressive preprocessing: Resize to 48x48 and convert to grayscale
+ * This matches the input shape of the backend CNN (48, 48, 1)
+ */
+function preprocessImageForCNN(base64Str) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 48;
+            canvas.height = 48;
+            const ctx = canvas.getContext('2d');
+            
+            // Draw and convert to grayscale
+            ctx.drawImage(img, 0, 0, 48, 48);
+            const imageData = ctx.getImageData(0, 0, 48, 48);
+            const data = imageData.data;
+            
+            for (let i = 0; i < data.length; i += 4) {
+                const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                data[i] = avg;     // R
+                data[i + 1] = avg; // G
+                data[i + 2] = avg; // B
+            }
+            ctx.putImageData(imageData, 0, 0);
+            
+            // Use low quality JPEG for smallest possible size
+            resolve(canvas.toDataURL('image/jpeg', 0.5));
+        };
+        img.src = base64Str;
+    });
 }
 
 /**

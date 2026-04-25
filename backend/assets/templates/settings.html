@@ -1,4 +1,5 @@
-{% load static %}\n<!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 
 <head>
@@ -262,7 +263,7 @@
                     body: JSON.stringify({ email: currentUser.email, name: newName, mobile: newMobile })
                 });
                 const data = await response.json();
-                
+
                 if (data.success) {
                     // Update current user session
                     currentUser.name = newName;
@@ -310,14 +311,14 @@
                 const response = await fetch(`${API_BASE_URL}/api/user/change-password/`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        email: currentUser.email, 
-                        currentPassword: currentPassword, 
-                        newPassword: newPassword 
+                    body: JSON.stringify({
+                        email: currentUser.email,
+                        currentPassword: currentPassword,
+                        newPassword: newPassword
                     })
                 });
                 const data = await response.json();
-                
+
                 if (data.success) {
                     // Clear form
                     document.getElementById('passwordForm').reset();
@@ -408,7 +409,7 @@
                     body: JSON.stringify({ email: currentUser.email })
                 });
                 const data = await response.json();
-                
+
                 if (data.success) {
                     // Clear current user session
                     localStorage.removeItem('currentUser');
