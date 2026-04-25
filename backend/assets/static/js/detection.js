@@ -138,9 +138,10 @@ async function checkBackendHealth() {
  */
 async function detectWithBackend(imageDataUrl) {
     try {
-        // OPTIMIZATION: Resize to exactly 48x48 grayscale (what the model expects)
-        // This makes the payload tiny and the detection very fast
-        const optimizedImage = await preprocessImageForCNN(imageDataUrl); 
+        // OPTIMIZATION: Center-crop and resize to 200x200
+        // This is large enough for the backend to detect faces accurately,
+        // but small enough (~8KB) to be instant over the network.
+        const optimizedImage = await preprocessImageForAccuracy(imageDataUrl); 
         
         const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.detectEndpoint}`, {
             method: 'POST',
@@ -967,33 +968,29 @@ async function detectStress(forceBackend = true) { // Default to true now for ac
 }
 
 /**
- * Aggressive preprocessing: Resize to 48x48 and convert to grayscale
- * This matches the input shape of the backend CNN (48, 48, 1)
+ * Optimized preprocessing: Center-crop and resize to 200x200
+ * Maintains aspect ratio and provides enough detail for backend face detection
  */
-function preprocessImageForCNN(base64Str) {
+function preprocessImageForAccuracy(base64Str) {
     return new Promise((resolve) => {
         const img = new Image();
         img.onload = () => {
             const canvas = document.createElement('canvas');
-            canvas.width = 48;
-            canvas.height = 48;
+            const size = 200; // Optimal size for speed + accuracy
+            canvas.width = size;
+            canvas.height = size;
             const ctx = canvas.getContext('2d');
             
-            // Draw and convert to grayscale
-            ctx.drawImage(img, 0, 0, 48, 48);
-            const imageData = ctx.getImageData(0, 0, 48, 48);
-            const data = imageData.data;
+            // Calculate center crop
+            const minDim = Math.min(img.width, img.height);
+            const sx = (img.width - minDim) / 2;
+            const sy = (img.height - minDim) / 2;
             
-            for (let i = 0; i < data.length; i += 4) {
-                const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                data[i] = avg;     // R
-                data[i + 1] = avg; // G
-                data[i + 2] = avg; // B
-            }
-            ctx.putImageData(imageData, 0, 0);
+            // Draw cropped and resized image
+            ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
             
-            // Use low quality JPEG for smallest possible size
-            resolve(canvas.toDataURL('image/jpeg', 0.5));
+            // Use medium quality JPEG for balance
+            resolve(canvas.toDataURL('image/jpeg', 0.8));
         };
         img.src = base64Str;
     });
