@@ -11,7 +11,7 @@ const CONFIG = {
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
             return `http://${window.location.hostname}:${port}`;
         }
-        // On Railway / Render / any production host, the API is served from the same origin
+        // On Render, the API is served from the same origin
         return window.location.origin;
     }
 };
