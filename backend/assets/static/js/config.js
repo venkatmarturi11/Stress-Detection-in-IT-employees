@@ -11,10 +11,11 @@ const CONFIG = {
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
             return `http://${window.location.hostname}:${port}`;
         }
-        // Fallback or Production URL
-        return 'https://stress-detection-in-it-employees.onrender.com';
+        // On Railway / Render / any production host, the API is served from the same origin
+        return window.location.origin;
     }
 };
 
 console.log('Environment:', (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'Local' : 'Production');
 console.log('API Base URL:', CONFIG.API_BASE_URL);
+
