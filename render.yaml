@@ -1,0 +1,20 @@
+services:
+  # Backend Web Service (Django)
+  - type: web
+    name: stress-detection-in-it-employees
+    env: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt && python manage.py migrate
+    startCommand: gunicorn StressDetection.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: DJANGO_DEBUG
+        value: "False"
+
+  # Frontend Static Site (HTML/JS/CSS)
+  - type: web
+    name: stress-detect-frontend
+    env: static
+    buildCommand: ""
+    staticPublishPath: "./"
