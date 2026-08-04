@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 
@@ -18,8 +19,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=2.1">
+    <link rel="stylesheet" href="{% static 'css/animations.css' %}?v=2.1">
 </head>
 
 <body>
@@ -32,30 +33,30 @@
             </div>
 
             <nav class="sidebar-menu">
-                <a href="user-dashboard.html" class="sidebar-link">
+                <a href="{% url 'UserHome' %}" class="sidebar-link">
                     <span class="sidebar-link-icon"><i class="fas fa-home"></i></span>
                     Dashboard
                 </a>
-                <a href="user-dashboard.html" class="sidebar-link">
+                <a href="{% url 'UserHome' %}" class="sidebar-link">
                     <span class="sidebar-link-icon"><i class="fas fa-camera"></i></span>
                     New Scan
                 </a>
-                <a href="results.html" class="sidebar-link active">
+                <a href="{% url 'user_results' %}" class="sidebar-link active">
                     <span class="sidebar-link-icon"><i class="fas fa-chart-bar"></i></span>
                     My Results
                 </a>
 
                 <div class="sidebar-section">Account</div>
 
-                <a href="settings.html" class="sidebar-link">
+                <a href="{% url 'user_settings' %}" class="sidebar-link">
                     <span class="sidebar-link-icon"><i class="fas fa-user"></i></span>
                     Profile
                 </a>
-                <a href="settings.html" class="sidebar-link">
+                <a href="{% url 'user_settings' %}" class="sidebar-link">
                     <span class="sidebar-link-icon"><i class="fas fa-cog"></i></span>
                     Settings
                 </a>
-                <a href="index.html" class="sidebar-link" id="logoutBtn">
+                <a href="{% url 'index' %}" class="sidebar-link" id="logoutBtn">
                     <span class="sidebar-link-icon"><i class="fas fa-sign-out-alt"></i></span>
                     Logout
                 </a>
@@ -72,7 +73,7 @@
                 </div>
 
                 <div class="dashboard-user">
-                    <a href="user-dashboard.html" class="btn btn-primary">
+                    <a href="{% url 'UserHome' %}" class="btn btn-primary">
                         <i class="fas fa-plus"></i>
                         New Scan
                     </a>
@@ -445,8 +446,9 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- Scripts -->
-    <script src="js/app.js"></script>
-    <script src="js/detection.js"></script>
+    <script src="{% static 'js/config.js' %}?v=2.1"></script>
+    <script src="{% static 'js/app.js' %}?v=2.1"></script>
+    <script src="{% static 'js/detection.js' %}?v=2.1"></script>
     <script>
 
         // Initialize results page
@@ -507,7 +509,7 @@
                 <div class="progress-bar" style="width: ${result.confidence}%;"></div>
               </div>
               <span>${result.confidence}%</span>
-            </div>
+            </div>`}
           </td>
         </tr>
       `).join('');
@@ -516,7 +518,7 @@
         // Load statistics
         async function loadStats() {
             const results = await getResultsHistory();
-Point:
+            Point:
 
 
             // Total scans
@@ -629,7 +631,7 @@ Point:
             localStorage.removeItem('currentUser');
             showToast('Logged out successfully!', 'success');
             setTimeout(() => {
-                window.location.href = 'index.html';
+                window.location.href = "{% url 'index' %}";
             }, 1000);
         });
 
@@ -892,7 +894,7 @@ Point:
                     color: 'var(--danger)',
                     bgColor: 'rgba(220, 53, 69, 0.2)',
                     title: 'Anger Management',
-                    description: 'Channel frustration productively: count to 10, write down what\'s bothering you, or do a quick 5-minute physical activity like jumping jacks.'
+                    description: 'Channel frustration productively: count to 10, write down what's bothering you, or do a quick 5-minute physical activity like jumping jacks.'
                 },
                 'Sad': {
                     icon: 'heart',

@@ -135,17 +135,21 @@ async function checkBackendHealth() {
 
 /**
  * Detect stress using the Python backend (real CNN model)
- * Supports MULTIPLE FACES detection
  */
 async function detectWithBackend(imageDataUrl) {
     try {
+        // OPTIMIZATION: Center-crop and resize to 200x200
+        // This is large enough for the backend to detect faces accurately,
+        // but small enough (~8KB) to be instant over the network.
+        const optimizedImage = await preprocessImageForAccuracy(imageDataUrl); 
+        
         const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.detectEndpoint}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                image: imageDataUrl
+                image: optimizedImage
             })
         });
 
@@ -921,9 +925,9 @@ async function detectClientSideFallback(imageDataUrl) {
 
 /**
  * Main stress detection function
- * Tries backend first, falls back to client-side if unavailable
+ * Prioritizes backend for accuracy, but uses optimized tiny payloads
  */
-async function detectStress() {
+async function detectStress(forceBackend = true) { // Default to true now for accuracy
     const imageDataUrl = window.uploadedImage;
 
     if (!imageDataUrl) {
@@ -939,17 +943,15 @@ async function detectStress() {
         };
     }
 
-    // Check backend availability if not already checked
+    // Try backend first for accuracy (optimized for speed)
     if (backendAvailable === null) {
         await checkBackendHealth();
     }
 
-    // Try backend first
     if (backendAvailable) {
         try {
             const result = await detectWithBackend(imageDataUrl);
-            console.log('🧠 Detection via CNN Backend:', result);
-
+            
             // Add user info
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
             result.userName = currentUser.name || 'Anonymous';
@@ -961,16 +963,37 @@ async function detectStress() {
         }
     }
 
-    // Fallback to client-side
-    const result = await detectClientSide(imageDataUrl);
-    console.log('📊 Detection via Client-side Analysis:', result);
+    // Fallback to Client-Side (Face-API.js) if backend is down
+    return await detectClientSide(imageDataUrl);
+}
 
-    // Add user info
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    result.userName = currentUser.name || 'Anonymous';
-    result.userEmail = currentUser.email || '';
-
-    return result;
+/**
+ * Optimized preprocessing: Center-crop and resize to 200x200
+ * Maintains aspect ratio and provides enough detail for backend face detection
+ */
+function preprocessImageForAccuracy(base64Str) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const size = 200; // Optimal size for speed + accuracy
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            // Calculate center crop
+            const minDim = Math.min(img.width, img.height);
+            const sx = (img.width - minDim) / 2;
+            const sy = (img.height - minDim) / 2;
+            
+            // Draw cropped and resized image
+            ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
+            
+            // Use medium quality JPEG for balance
+            resolve(canvas.toDataURL('image/jpeg', 0.8));
+        };
+        img.src = base64Str;
+    });
 }
 
 /**

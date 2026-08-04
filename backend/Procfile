@@ -1,1 +1,1 @@
-web: gunicorn StressDetection.wsgi
+web: gunicorn StressDetection.wsgi:application

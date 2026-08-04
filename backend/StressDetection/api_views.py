@@ -12,8 +12,9 @@ from django.conf import settings
 # TensorFlow and Keras will be imported lazily inside get_model() to prevent memory spikes on startup
 
 
-# Load the model once on startup
+# Load the model and cascade once on startup
 MODEL = None
+FACE_CASCADE = None
 EMOTION_DICT = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
 
 # Stress mapping based on emotions
@@ -87,9 +88,12 @@ def detect_emotion_from_image(image_data):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         
         # Face detection using Haar Cascade
-        cascade_path = os.path.join(settings.BASE_DIR, 'haarcascade_frontalface_default.xml')
-        face_cascade = cv2.CascadeClassifier(cascade_path)
-        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
+        global FACE_CASCADE
+        if FACE_CASCADE is None:
+            cascade_path = os.path.join(settings.BASE_DIR, 'haarcascade_frontalface_default.xml')
+            FACE_CASCADE = cv2.CascadeClassifier(cascade_path)
+            
+        faces = FACE_CASCADE.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
         
         # Store results for all faces
         all_face_results = []
@@ -223,10 +227,7 @@ def api_detect_stress(request):
         response["Access-Control-Allow-Origin"] = "*"
         return response
         
-    except Exception as e:
-        import json
-        # In case it failed before json was imported
-
+    except (ValueError, KeyError) as e:
         return JsonResponse({
             "success": False,
             "error": "Invalid JSON data"

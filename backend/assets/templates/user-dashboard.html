@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 
@@ -21,8 +22,8 @@
     <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=2.1">
+    <link rel="stylesheet" href="{% static 'css/animations.css' %}?v=2.1">
 </head>
 
 <body>
@@ -35,7 +36,7 @@
             </div>
 
             <nav class="sidebar-menu">
-                <a href="user-dashboard.html" class="sidebar-link active">
+                <a href="{% url 'UserHome' %}" class="sidebar-link active">
                     <span class="sidebar-link-icon"><i class="fas fa-home"></i></span>
                     Dashboard
                 </a>
@@ -43,26 +44,26 @@
                     <span class="sidebar-link-icon"><i class="fas fa-camera"></i></span>
                     New Scan
                 </a>
-                <a href="results.html" class="sidebar-link">
+                <a href="{% url 'user_results' %}" class="sidebar-link">
                     <span class="sidebar-link-icon"><i class="fas fa-chart-bar"></i></span>
                     My Results
                 </a>
-                <a href="survey-prediction.html" class="sidebar-link">
+                <a href="{% url 'survey_prediction' %}" class="sidebar-link">
                     <span class="sidebar-link-icon"><i class="fas fa-clipboard-list"></i></span>
                     Survey Assessment
                 </a>
 
                 <div class="sidebar-section">Account</div>
 
-                <a href="settings.html" class="sidebar-link">
+                <a href="{% url 'user_settings' %}" class="sidebar-link">
                     <span class="sidebar-link-icon"><i class="fas fa-user"></i></span>
                     Profile
                 </a>
-                <a href="settings.html" class="sidebar-link">
+                <a href="{% url 'user_settings' %}" class="sidebar-link">
                     <span class="sidebar-link-icon"><i class="fas fa-cog"></i></span>
                     Settings
                 </a>
-                <a href="index.html" class="sidebar-link" id="logoutBtn">
+                <a href="{% url 'index' %}" class="sidebar-link" id="logoutBtn">
                     <span class="sidebar-link-icon"><i class="fas fa-sign-out-alt"></i></span>
                     Logout
                 </a>
@@ -188,41 +189,35 @@
 
                             <!-- Live Results Overlay -->
                             <div id="liveResultsOverlay" class="d-none"
-                                style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 1.5rem; color: white;">
-                                <div
-                                    style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center;">
+                                style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.95)); padding: 1rem 1.25rem; color: white;">
+                                <!-- Main Row: Stress, Emotion, Confidence -->
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem; margin-bottom: 0.75rem;">
                                     <div>
-                                        <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 0.25rem;">Stress
-                                            Level</div>
-                                        <div id="liveStressLevel"
-                                            style="font-size: 1.1rem; font-weight: 700; color: var(--success);">--</div>
+                                        <div style="font-size: 0.65rem; opacity: 0.6; text-transform: uppercase; margin-bottom: 0.15rem;">Stress Level</div>
+                                        <div id="liveStressLevel" style="font-size: 0.95rem; font-weight: 700; color: var(--success);">--</div>
                                     </div>
                                     <div>
-                                        <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 0.25rem;">Emotion
-                                        </div>
-                                        <div id="liveEmotion" style="font-size: 1.1rem; font-weight: 700;">--</div>
+                                        <div style="font-size: 0.65rem; opacity: 0.6; text-transform: uppercase; margin-bottom: 0.15rem;">Emotion</div>
+                                        <div id="liveEmotion" style="font-size: 0.95rem; font-weight: 700;">--</div>
                                     </div>
                                     <div>
-                                        <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 0.25rem;">
-                                            Confidence</div>
-                                        <div id="liveConfidence"
-                                            style="font-size: 1.1rem; font-weight: 700; color: var(--primary-400);">--%
-                                        </div>
+                                        <div style="font-size: 0.65rem; opacity: 0.6; text-transform: uppercase; margin-bottom: 0.15rem;">Confidence</div>
+                                        <div id="liveConfidence" style="font-size: 0.95rem; font-weight: 700; color: var(--primary-400);">--%</div>
                                     </div>
                                 </div>
-                                <div
-                                    style="margin-top: 0.75rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; font-size: 0.75rem;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="opacity: 0.7;">Eye Strain:</span>
-                                        <span id="liveEyeStrain">--</span>
+                                <!-- Inline Indicators: Eye, Brow, Fatigue -->
+                                <div style="display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.7rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.3rem; background: rgba(255,255,255,0.05); padding: 0.2rem 0.4rem; border-radius: 4px;">
+                                        <span style="opacity: 0.6;">Eye:</span>
+                                        <span id="liveEyeStrain" style="font-weight: 600;">--</span>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="opacity: 0.7;">Brow:</span>
-                                        <span id="liveBrowTension">--</span>
+                                    <div style="display: flex; align-items: center; gap: 0.3rem; background: rgba(255,255,255,0.05); padding: 0.2rem 0.4rem; border-radius: 4px;">
+                                        <span style="opacity: 0.6;">Brow:</span>
+                                        <span id="liveBrowTension" style="font-weight: 600;">--</span>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="opacity: 0.7;">Fatigue:</span>
-                                        <span id="liveFatigue">--</span>
+                                    <div style="display: flex; align-items: center; gap: 0.3rem; background: rgba(255,255,255,0.05); padding: 0.2rem 0.4rem; border-radius: 4px;">
+                                        <span style="opacity: 0.6;">Fatigue:</span>
+                                        <span id="liveFatigue" style="font-weight: 600;">--</span>
                                     </div>
                                 </div>
                             </div>
@@ -438,7 +433,7 @@
                             <i class="fas fa-redo"></i>
                             New Scan
                         </button>
-                        <button class="btn btn-secondary" onclick="window.location.href='results.html'">
+                        <button class="btn btn-secondary" onclick="window.location.href='{% url 'user_results' %}'">
                             <i class="fas fa-history"></i>
                             View Full Analysis
                         </button>
@@ -533,7 +528,7 @@
                         <i class="fas fa-history" style="color: var(--primary-400); margin-right: 0.5rem;"></i>
                         Recent Scans
                     </h3>
-                    <a href="results.html" class="btn btn-sm btn-secondary">View All</a>
+                    <a href="{% url 'user_results' %}" class="btn btn-sm btn-secondary">View All</a>
                 </div>
 
                 <div class="table-container" style="border: none; background: none;">
@@ -575,8 +570,9 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- Scripts -->
-    <script src="js/app.js"></script>
-    <script src="js/detection.js"></script>
+    <script src="{% static 'js/config.js' %}?v=2.1"></script>
+    <script src="{% static 'js/app.js' %}?v=2.1"></script>
+    <script src="{% static 'js/detection.js' %}?v=2.1"></script>
     <script>
         // Initialize dashboard
         document.addEventListener('DOMContentLoaded', async () => {
@@ -587,11 +583,11 @@
             // Check if user is logged in
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
             const userName = currentUser.name || currentUser.username || currentUser.fullName || 'Guest';
-            
+
             document.getElementById('userName').textContent = userName;
             const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase();
             document.getElementById('userAvatar').textContent = initials;
-            
+
             if (!currentUser.email && window.location.pathname.includes('dashboard')) {
                 console.warn('No active session found, some features may be limited');
             }
@@ -771,6 +767,7 @@
             startCamera();
         });
 
+
         // Capture Photo from Camera
         captureBtn.addEventListener('click', () => {
             if (!cameraStream) {
@@ -879,7 +876,7 @@
             document.getElementById('livePeakStress').textContent = '--';
             document.getElementById('liveSessionTime').textContent = '00:00';
 
-            cameraHintText.textContent = 'Analyzing continuously... Results update every 2 seconds';
+            cameraHintText.textContent = 'Analyzing continuously... Results update every 1 second';
 
             // Start session timer
             liveSessionTimer = setInterval(() => {
@@ -891,10 +888,12 @@
 
             // Start continuous detection
             performLiveDetection();
-            liveMonitorInterval = setInterval(performLiveDetection, 2000);
+            liveMonitorInterval = setInterval(performLiveDetection, 300); // 300ms for "Instant" feel
 
-            showToast('Live monitoring started! Results update every 2 seconds.', 'success');
+            showToast('Live monitoring started! Results update every 1 second.', 'success');
         });
+
+        let isDetecting = false; // Flag to prevent overlapping requests
 
         // Perform Live Detection (captures frame and analyzes)
         async function performLiveDetection() {
@@ -902,6 +901,9 @@
                 stopLiveMonitoring();
                 return;
             }
+
+            if (isDetecting) return; // Skip if previous frame is still processing
+            isDetecting = true;
 
             // Capture current frame
             cameraCanvas.width = cameraVideo.videoWidth;
@@ -928,6 +930,8 @@
                 updateLiveSessionStats();
             } catch (error) {
                 console.error('Live detection error:', error);
+            } finally {
+                isDetecting = false; // Release lock
             }
         }
 
@@ -1060,8 +1064,8 @@
             }, 200);
 
             try {
-                // Call detectStress with await (it's an async function!)
-                const result = await detectStress();
+                // Call detectStress with forceBackend=true for high accuracy on single analysis
+                const result = await detectStress(true);
 
                 clearInterval(progressInterval);
                 progressBar.style.width = '100%';
@@ -1431,7 +1435,7 @@
             localStorage.removeItem('currentUser');
             showToast('Logged out successfully!', 'success');
             setTimeout(() => {
-                window.location.href = 'index.html';
+                window.location.href = "{% url 'index' %}";
             }, 1000);
         });
     </script>

@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+try:
+    import dotenv
+    dotenv.load_dotenv()
+except ImportError:
+    pass  # python-dotenv not installed, skip .env loading
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,13 +25,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '@=sbu6*esnixm37fq329)!qn#5*m27*sey%5pmfb#g+=qw+88('
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '@=sbu6*esnixm37fq329)!qn#5*m27*sey%5pmfb#g+=qw+88(')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com', '*']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,.onrender.com,stress-detection-in-it-employees.onrender.com').split(',')
 
 
 # Application definition
@@ -88,10 +92,17 @@ DATABASES = {
     }
 }
 
-# Database configuration for Render (PostgreSQL)
-import dj_database_url
-db_from_env = dj_database_url.config(conn_max_age=600)
-DATABASES['default'].update(db_from_env)
+# Use dj_database_url to parse the DATABASE_URL environment variable for PostgreSQL
+try:
+    import dj_database_url
+    if os.environ.get('DATABASE_URL'):
+        DATABASES['default'] = dj_database_url.config(
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=True
+        )
+except ImportError:
+    pass
 
 
 # Password validation
@@ -133,8 +144,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'assets/static'), ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-WHITENOISE_MANIFEST_STRICT = False
+try:
+    import whitenoise  # noqa: F401
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+    WHITENOISE_MANIFEST_STRICT = False
+except ImportError:
+    pass  # whitenoise not installed, use default static storage
 
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -142,3 +157,19 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True # For development
+
+# Security settings for production
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+else:
+    # Explicitly disable these in development to avoid ERR_SSL_PROTOCOL_ERROR
+    SECURE_SSL_REDIRECT = False
+    SECURE_HSTS_SECONDS = 0

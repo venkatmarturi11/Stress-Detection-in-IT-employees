@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 
@@ -18,8 +19,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=2.1">
+    <link rel="stylesheet" href="{% static 'css/animations.css' %}?v=2.1">
 </head>
 
 <body>
@@ -62,11 +63,11 @@
             <div class="auth-form-wrapper">
                 <!-- Top Nav -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
-                    <a href="index.html"
+                    <a href="{% url 'index' %}"
                         style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.9rem; text-decoration: none; transition: color 0.3s;">
                         <i class="fas fa-arrow-left"></i> Back to Home
                     </a>
-                    <a href="register.html" class="btn btn-secondary btn-sm">
+                    <a href="{% url 'UserRegister' %}" class="btn btn-secondary btn-sm">
                         Create Account
                     </a>
                 </div>
@@ -126,13 +127,13 @@
 
                 <div class="auth-divider">or</div>
 
-                <a href="admin-login.html" class="btn btn-secondary w-full">
+                <a href="{% url 'AdminLogin' %}" class="btn btn-secondary w-full">
                     <i class="fas fa-user-shield"></i>
                     Login as Admin
                 </a>
 
                 <div class="auth-footer" style="margin-top: 1.5rem;">
-                    Don't have an account? <a href="register.html">Create one</a>
+                    Don't have an account? <a href="{% url 'UserRegister' %}">Create one</a>
                 </div>
 
                 <!-- Demo Credentials Card -->
@@ -163,8 +164,9 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- Scripts -->
-    <script src="js/animations.js"></script>
-    <script src="js/auth.js"></script>
+    <script src="{% static 'js/animations.js' %}?v=2.1"></script>
+    <script src="{% static 'js/config.js' %}?v=2.1"></script>
+    <script src="{% static 'js/auth.js' %}?v=2.1"></script>
     <script>
         // Password visibility toggle
         const togglePassword = document.getElementById('togglePassword');

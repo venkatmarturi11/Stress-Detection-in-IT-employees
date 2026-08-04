@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 
@@ -18,8 +19,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animations.css' %}">
 </head>
 
 <body>
@@ -32,15 +33,15 @@
             </div>
 
             <nav class="sidebar-menu">
-                <a href="user-dashboard.html" class="sidebar-link">
+                <a href="{% url 'UserHome' %}" class="sidebar-link">
                     <span class="sidebar-link-icon"><i class="fas fa-home"></i></span>
                     Dashboard
                 </a>
-                <a href="user-dashboard.html" class="sidebar-link">
+                <a href="{% url 'UserHome' %}" class="sidebar-link">
                     <span class="sidebar-link-icon"><i class="fas fa-camera"></i></span>
                     New Scan
                 </a>
-                <a href="results.html" class="sidebar-link">
+                <a href="{% url 'user_results' %}" class="sidebar-link">
                     <span class="sidebar-link-icon"><i class="fas fa-chart-bar"></i></span>
                     My Results
                 </a>
@@ -51,11 +52,11 @@
                     <span class="sidebar-link-icon"><i class="fas fa-user"></i></span>
                     Profile
                 </a>
-                <a href="settings.html" class="sidebar-link active">
+                <a href="{% url 'user_settings' %}" class="sidebar-link active">
                     <span class="sidebar-link-icon"><i class="fas fa-cog"></i></span>
                     Settings
                 </a>
-                <a href="index.html" class="sidebar-link" id="logoutBtn">
+                <a href="{% url 'index' %}" class="sidebar-link" id="logoutBtn">
                     <span class="sidebar-link-icon"><i class="fas fa-sign-out-alt"></i></span>
                     Logout
                 </a>
@@ -222,7 +223,9 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- Scripts -->
+    <script src="{% static 'js/config.js' %}?v=2.1"></script>
     <script>
+        const API_BASE_URL = CONFIG.API_BASE_URL;
         // Load current user data
         document.addEventListener('DOMContentLoaded', () => {
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
@@ -241,12 +244,10 @@
         });
 
         // Profile form submission
-        document.getElementById('profileForm').addEventListener('submit', (e) => {
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-
             const newName = document.getElementById('fullName').value.trim();
             const newMobile = document.getElementById('mobile').value.trim();
 
@@ -255,52 +256,42 @@
                 return;
             }
 
-            // Update user in users array
-            const userIndex = users.findIndex(u => u.email === currentUser.email);
-            if (userIndex !== -1) {
-                users[userIndex].name = newName;
-                users[userIndex].mobile = newMobile;
-                localStorage.setItem('users', JSON.stringify(users));
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/user/update-profile/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: currentUser.email, name: newName, mobile: newMobile })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update current user session
+                    currentUser.name = newName;
+                    currentUser.mobile = newMobile;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                    // Update avatar
+                    document.getElementById('userAvatar').textContent = newName.split(' ').map(n => n[0]).join('').toUpperCase();
+                    showToast('Profile updated successfully!', 'success');
+                } else {
+                    showToast(data.error || 'Failed to update profile', 'error');
+                }
+            } catch (error) {
+                showToast('Server error', 'error');
             }
-
-            // Update current user session
-            currentUser.name = newName;
-            currentUser.mobile = newMobile;
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-            // Update avatar
-            document.getElementById('userAvatar').textContent = newName.split(' ').map(n => n[0]).join('').toUpperCase();
-
-            showToast('Profile updated successfully!', 'success');
         });
 
         // Password form submission
-        document.getElementById('passwordForm').addEventListener('submit', (e) => {
+        document.getElementById('passwordForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-
             const currentPassword = document.getElementById('currentPassword').value;
             const newPassword = document.getElementById('newPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
             // Clear errors
             document.querySelectorAll('.form-error').forEach(el => el.classList.add('d-none'));
-
-            // Find user
-            const userIndex = users.findIndex(u => u.email === currentUser.email);
-            if (userIndex === -1) {
-                showToast('User not found', 'error');
-                return;
-            }
-
-            // Validate current password
-            if (users[userIndex].password !== currentPassword) {
-                document.getElementById('currentPasswordError').textContent = 'Current password is incorrect';
-                document.getElementById('currentPasswordError').classList.remove('d-none');
-                return;
-            }
 
             // Validate new password
             if (newPassword.length < 6) {
@@ -316,16 +307,31 @@
                 return;
             }
 
-            // Update password
-            users[userIndex].password = newPassword;
-            localStorage.setItem('users', JSON.stringify(users));
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/user/change-password/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: currentUser.email,
+                        currentPassword: currentPassword,
+                        newPassword: newPassword
+                    })
+                });
+                const data = await response.json();
 
-            // Clear form
-            document.getElementById('passwordForm').reset();
-            document.getElementById('passwordStrength').style.width = '0%';
-            document.getElementById('passwordStrengthText').textContent = 'Password strength: Enter a password';
-
-            showToast('Password updated successfully!', 'success');
+                if (data.success) {
+                    // Clear form
+                    document.getElementById('passwordForm').reset();
+                    document.getElementById('passwordStrength').style.width = '0%';
+                    document.getElementById('passwordStrengthText').textContent = 'Password strength: Enter a password';
+                    showToast('Password updated successfully!', 'success');
+                } else {
+                    document.getElementById('currentPasswordError').textContent = data.error || 'Failed to change password';
+                    document.getElementById('currentPasswordError').classList.remove('d-none');
+                }
+            } catch (error) {
+                showToast('Server error', 'error');
+            }
         });
 
         // Password strength indicator
@@ -393,23 +399,32 @@
             confirmModal.classList.remove('active');
         });
 
-        document.getElementById('modalConfirm').addEventListener('click', () => {
+        document.getElementById('modalConfirm').addEventListener('click', async () => {
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-            let users = JSON.parse(localStorage.getItem('users') || '[]');
 
-            // Remove user from users array
-            users = users.filter(u => u.email !== currentUser.email);
-            localStorage.setItem('users', JSON.stringify(users));
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/user/delete-account/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: currentUser.email })
+                });
+                const data = await response.json();
 
-            // Clear current user session
-            localStorage.removeItem('currentUser');
+                if (data.success) {
+                    // Clear current user session
+                    localStorage.removeItem('currentUser');
+                    confirmModal.classList.remove('active');
+                    showToast('Account deleted successfully', 'success');
 
-            confirmModal.classList.remove('active');
-            showToast('Account deleted successfully', 'success');
-
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1500);
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                } else {
+                    showToast(data.error || 'Failed to delete account', 'error');
+                }
+            } catch (error) {
+                showToast('Server error', 'error');
+            }
         });
 
         // Toast notification

@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = 'http://localhost:8000'; // Update this if your backend runs elsewhere
+const API_BASE_URL = CONFIG.API_BASE_URL;
 
 // ===== Registration Form Handler =====
 const registerForm = document.getElementById('registerForm');
@@ -80,7 +80,7 @@ if (registerForm) {
                 showAlert('Registration successful! Redirecting to login...', 'success');
                 registerForm.reset();
                 setTimeout(() => {
-                    window.location.href = 'login.html';
+                    window.location.href = '/UserLogin/';
                 }, 2000);
             } else {
                 showError('emailError', result.error || 'Registration failed');
@@ -153,7 +153,7 @@ if (loginForm) {
                 
                 showAlert('Login successful! Redirecting...', 'success');
                 setTimeout(() => {
-                    window.location.href = 'user-dashboard.html';
+                    window.location.href = '/UserHome/';
                 }, 1000);
             } else {
                 showAlert(result.error || 'Invalid email or password.', 'danger');
@@ -244,7 +244,7 @@ function showAlert(message, type = 'info') {
 function checkAuth() {
     const currentUser = localStorage.getItem('currentUser');
     if (!currentUser) {
-        window.location.href = 'login.html';
+        window.location.href = '/UserLogin/';
         return null;
     }
     return JSON.parse(currentUser);
@@ -253,7 +253,7 @@ function checkAuth() {
 // ===== Logout =====
 function logout() {
     localStorage.removeItem('currentUser');
-    window.location.href = 'index.html';
+    window.location.href = '/index/';
 }
 
 // Export for global use
